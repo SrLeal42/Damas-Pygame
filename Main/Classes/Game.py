@@ -15,6 +15,9 @@ class Game:
         PB = self.CreatePecas(0)
         PP = self.CreatePecas(1)
 
+        self.PecasBrancas = PB
+        self.PecasPretas = PP
+
         self.tabuleiro = Tabuleiro()
 
         self.tabuleiro.AdicionaPecasAoTabuleiro(PB, 1)
@@ -26,6 +29,7 @@ class Game:
 
         P = []
         for _ in range(NUM_PECAS):
+
             p = Peca(cor,0,0)
             P.append(p)
 
