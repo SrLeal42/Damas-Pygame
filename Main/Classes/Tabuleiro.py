@@ -74,7 +74,8 @@ class Tabuleiro:
 
                 peca = self.tabuleiro[i][j]
 
-                if peca == None:
+                if peca == None or peca.comida ==True:
+                    PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
                     continue
 
                 color = WHITE if peca.cor == 0 else BLACK
@@ -102,8 +103,47 @@ class Tabuleiro:
                     closest_dist = dist
                     closest = [(x2,y2),(i,j)]
 
-
+        print(closest)
         return closest
+
+
+    def VerifyMove(self, linha:int, coluna:int, peca:Peca):
+        
+        orientacao_peca = -1 if peca.cor == 0 else 1
+        dif_linha = linha - peca.start_linha
+        dif_coluna = coluna - peca.start_coluna
+
+        if (dif_linha == 0 or dif_coluna == 0):
+            return False
+        
+        if (self.tabuleiro[linha][coluna] != None):
+            return False
+        
+        # Peça normal
+        if (peca.tipo == 0):
+
+            # Verificando a direção
+            if ((orientacao_peca < 0) != (dif_linha < 0)):
+                return False
+            
+            # Verificando quantidade de quadrados pulados 
+            if (abs(dif_coluna) > 2 or abs(dif_linha) > 2):
+                return False
+            
+            if (abs(dif_coluna) == 2 or abs(dif_linha) == 2): 
+                linha_between = linha + (orientacao_peca * -1)
+                orientacao_coluna = -1 if dif_coluna < 0 else 1
+                coluna_between = coluna + (orientacao_coluna * -1)
+                peca_between = self.tabuleiro[linha_between][coluna_between]
+                if (peca_between == None or peca_between.cor == peca.cor):
+                    return False
+                # else:
+                #     peca_between.ComerPeca(self.tabuleiro)
+
+
+
+        return True
+
 
 
     def TryChangePecaPlace(self, peca):
@@ -111,9 +151,12 @@ class Tabuleiro:
         closest = self.ClosePlace(peca.x,peca.y)
         # print(closest)
         
-        if (self.tabuleiro[closest[1][0]][closest[1][1]] != None):
+        canMove = self.VerifyMove(closest[1][0],closest[1][1],peca)
+        
+        if (not canMove):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return
+        
         self.tabuleiro[peca.start_linha][peca.start_coluna] = None
         self.tabuleiro[closest[1][0]][closest[1][1]] = peca
 
