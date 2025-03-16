@@ -9,6 +9,9 @@ class Game:
     PecasBrancas = None
     PecasPretas = None
 
+    num_rodadas = 0
+    cor_rodada = 0
+
     def __init__(self):
 
         # PEÇAS BRANCAS
@@ -34,4 +37,8 @@ class Game:
             P.append(p)
 
         return P
+    
+    def EndTurn(self):
+        self.num_rodadas += 1
+        self.cor_rodada = 0 if self.cor_rodada == 1 else 1
 

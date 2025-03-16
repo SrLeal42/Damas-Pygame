@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK
+from Config import LARGURA, ALTURA,GRAY,BLACK,FONTE_PRIN
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -15,6 +15,8 @@ PG.display.set_caption("Damas")
 current_game = None
 
 peca_being_dragged = None
+
+fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 
 def CreateGame():
     global current_game 
@@ -42,23 +44,47 @@ def HandlePecasClick():
             # PG.draw.rect(window, BLACK, ret)
             
             if colidiu and (peca_being_dragged == None or peca_being_dragged == p):
+                if current_game.cor_rodada != p.cor:
+                    break 
                 peca_being_dragged = p
                 p.SetCoord(mouse_pos[0],mouse_pos[1])
                 break
 
 
 
+
+
 def HandlePecasRelease():
     global peca_being_dragged
+    global current_game
 
     if peca_being_dragged == None:
         return
 
-    current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged)
+    response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged)
 
     peca_being_dragged = None
 
+    if (not response["canMove"]):
+        return
 
+    if (not response["pecaCapturada"]):
+        current_game.EndTurn()
+        return
+
+
+def DrawCorRodada():
+    global current_game
+    global window
+
+    if current_game == None:
+        return
+    
+    text = "Preto" if current_game.cor_rodada == 1 else "Branco"
+    
+    text_render = fonte_principal.render(text, True, BLACK)  # Atualiza o texto
+
+    window.blit(text_render, (LARGURA/2 - 50, 10))
 
 while(running):
 
@@ -68,6 +94,8 @@ while(running):
          CreateGame()
 
     current_game.tabuleiro.DesenhaTabuleiro(window)
+
+    DrawCorRodada()
 
     mouse = PG.mouse.get_pressed()
 
@@ -81,10 +109,7 @@ while(running):
             running = False
             # for i in range(current_game.tabuleiro.tamanho):
             #     for j in range(current_game.tabuleiro.tamanho):
-            #         if current_game.tabuleiro.tabuleiro[i][j]:
-            #             print(current_game.tabuleiro.tabuleiro[i][j].capturada)
-            #         else:
-            #             print(None)
+            #         print(current_game.tabuleiro.tabuleiro[i][j])
 
     PG.display.flip()
 
