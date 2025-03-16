@@ -15,6 +15,7 @@ PG.display.set_caption("Damas")
 current_game = None
 
 peca_being_dragged = None
+last_peca_moved = None
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 
@@ -44,8 +45,12 @@ def HandlePecasClick():
             # PG.draw.rect(window, BLACK, ret)
             
             if colidiu and (peca_being_dragged == None or peca_being_dragged == p):
-                if current_game.cor_rodada != p.cor:
-                    break 
+                if (current_game.cor_rodada != p.cor):
+                    break
+
+                if (current_game.sequencia_captura and p != last_peca_moved):# Caso o player esteja em uma sequenecia de captura e ele deve mover a apenas a ultima peça que ele moveu  
+                    break
+
                 peca_being_dragged = p
                 p.SetCoord(mouse_pos[0],mouse_pos[1])
                 break
@@ -55,22 +60,30 @@ def HandlePecasClick():
 
 
 def HandlePecasRelease():
-    global peca_being_dragged
-    global current_game
+    global peca_being_dragged, current_game, last_peca_moved
 
     if peca_being_dragged == None:
         return
 
-    response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged)
+    response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged,current_game)
+    last_peca_moved = peca_being_dragged
+
 
     peca_being_dragged = None
+    
 
     if (not response["canMove"]):
         return
 
-    if (not response["pecaCapturada"]):
-        current_game.EndTurn()
-        return
+    if (response["pecaCapturada"] or current_game.sequencia_captura):
+        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
+        
+        current_game.sequencia_captura = canCapture
+        # print(canCapture)
+
+    current_game.EndTurn()
+
+
 
 
 def DrawCorRodada():

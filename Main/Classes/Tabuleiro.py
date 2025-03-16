@@ -147,7 +147,7 @@ class Tabuleiro:
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada}
 
 
-    def TryChangePecaPlace(self, peca):
+    def TryChangePecaPlace(self, peca, game):
 
         closest = self.ClosePlace(peca.x,peca.y)
         # print(closest)
@@ -158,6 +158,10 @@ class Tabuleiro:
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
 
+        if (game.sequencia_captura and not response["pecaCapturada"]):
+            peca.SetCoord(peca.start_x,peca.start_y,True)
+            return {"canMove":False, "mensage":"Em uma sequencia de captura voce deve se movimentar apenas capturando outras peças", "pecaCapturada":False}
+
         self.tabuleiro[peca.start_linha][peca.start_coluna] = None
         self.tabuleiro[closest[1][0]][closest[1][1]] = peca
 
@@ -165,6 +169,52 @@ class Tabuleiro:
         peca.SetTabCoord(closest[1][0],closest[1][1],True)
 
         return response
+    
+    def VerifyPecaCanCapture(self, peca:Peca):
+
+        orientacao_peca = -1 if peca.cor == 0 else 1
+
+        if (peca.tipo == 0):
+            linha = peca.linha + orientacao_peca if peca.linha + orientacao_peca < self.tamanho and peca.linha + orientacao_peca >= 0 else None 
+            peca_esquerda = self.tabuleiro[linha][peca.coluna - 1] if (peca.coluna - 1 < self.tamanho and peca.coluna - 1 >= 0) and linha != None else None
+            peca_direita = self.tabuleiro[linha][peca.coluna + 1] if (peca.coluna + 1 < self.tamanho and peca.coluna + 1 >= 0) and linha != None else None
+
+            canCaptureLeft = False
+            canCaptureRight = False
+
+            quad_vazio_linha = peca.linha + (2 * orientacao_peca) if peca.linha + (2 * orientacao_peca) < self.tamanho and peca.linha + (2 * orientacao_peca) >= 0 else None
+
+            # Verificando a esquerda 
+            if (peca_esquerda != None):
+                
+                quad_vazio_esquerda = self.tabuleiro[quad_vazio_linha][peca.coluna - 2] if (peca.coluna - 2 < self.tamanho and peca.coluna - 2 >= 0) and quad_vazio_linha != None else -1
+                if (peca.cor == peca_esquerda.cor):
+                    
+                    canCaptureLeft = False
+                elif (quad_vazio_esquerda != None):
+                    canCaptureLeft = False
+                else: 
+                    canCaptureLeft = True
+
+            # Verificando a direita
+            if (peca_direita != None):
+                
+                quad_vazio_direita = self.tabuleiro[quad_vazio_linha][peca.coluna + 2] if (peca.coluna + 2 < self.tamanho and peca.coluna + 2 >= 0) and quad_vazio_linha != None else -1
+
+                if (peca.cor == peca_direita.cor):
+                    
+                    canCaptureRight = False
+                elif (quad_vazio_direita != None):
+                    
+                    canCaptureRight = False
+                else:
+                    
+                    canCaptureRight = True
+            
+            return canCaptureLeft or canCaptureRight
+        
+        return False
+
 
         
 

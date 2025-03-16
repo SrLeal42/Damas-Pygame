@@ -2,7 +2,7 @@
 
 class Peca:
 
-    cor = -1
+    cor = -1 # 0 = Branca 1 = Preto
     tipo = 0
     linha = -1
     coluna = -1

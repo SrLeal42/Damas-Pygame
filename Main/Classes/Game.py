@@ -11,6 +11,7 @@ class Game:
 
     num_rodadas = 0
     cor_rodada = 0
+    sequencia_captura = False # Significa que caso um player capture uma peça e existe a possibilidade de capturar outras ele deve continuar na sequencia de capturas
 
     def __init__(self):
 
@@ -40,5 +41,7 @@ class Game:
     
     def EndTurn(self):
         self.num_rodadas += 1
-        self.cor_rodada = 0 if self.cor_rodada == 1 else 1
+        if (not self.sequencia_captura):
+            self.cor_rodada = 0 if self.cor_rodada == 1 else 1
+        # self.sequencia_captura = False
 
