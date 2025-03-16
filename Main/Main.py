@@ -29,31 +29,23 @@ def HandlePecasClick():
     mouse_pos = PG.mouse.get_pos()
     global peca_being_dragged
 
-    for p in current_game.PecasBrancas:
-        x = p.x - p.tamanho
-        y = p.y - p.tamanho
-        ret = PG.Rect(x, y, p.tamanho*2, p.tamanho*2)
-        colidiu = ret.collidepoint(mouse_pos)
-        
-        # PG.draw.rect(window, BLACK, ret)
-        
-        if colidiu and (peca_being_dragged == None or peca_being_dragged == p):
-            peca_being_dragged = p
-            p.SetCoord(mouse_pos[0],mouse_pos[1])
-            break
+    for linha in range(current_game.tabuleiro.tamanho):
+        for coluna in range(current_game.tabuleiro.tamanho):
+            p = current_game.tabuleiro.tabuleiro[linha][coluna]
+            if p == None:
+                continue
+            x = p.x - p.tamanho
+            y = p.y - p.tamanho
+            ret = PG.Rect(x, y, p.tamanho*2, p.tamanho*2)
+            colidiu = ret.collidepoint(mouse_pos)
+            
+            # PG.draw.rect(window, BLACK, ret)
+            
+            if colidiu and (peca_being_dragged == None or peca_being_dragged == p):
+                peca_being_dragged = p
+                p.SetCoord(mouse_pos[0],mouse_pos[1])
+                break
 
-    for p in current_game.PecasPretas:
-        x = p.x - p.tamanho
-        y = p.y - p.tamanho
-        ret = PG.Rect(x, y, p.tamanho*2, p.tamanho*2)
-        colidiu = ret.collidepoint(mouse_pos)
-        
-        # PG.draw.rect(window, BLACK, ret)
-        
-        if colidiu and (peca_being_dragged == None or peca_being_dragged == p):
-            peca_being_dragged = p
-            p.SetCoord(mouse_pos[0],mouse_pos[1])
-            break
 
 
 def HandlePecasRelease():
@@ -89,7 +81,10 @@ while(running):
             running = False
             # for i in range(current_game.tabuleiro.tamanho):
             #     for j in range(current_game.tabuleiro.tamanho):
-            #         print(current_game.tabuleiro.tabuleiro[i][j])
+            #         if current_game.tabuleiro.tabuleiro[i][j]:
+            #             print(current_game.tabuleiro.tabuleiro[i][j].capturada)
+            #         else:
+            #             print(None)
 
     PG.display.flip()
 

@@ -13,7 +13,7 @@ class Peca:
     start_x = 0
     start_y = 0
     tamanho = 15
-    comida = False
+    capturada = False
 
     def __init__(self,cor:int,linha:int,coluna:int,x=0,y=0,tipo=0):
         self.cor = cor
@@ -43,11 +43,9 @@ class Peca:
             self.start_linha = linha
 
 
-    def ComerPeca(self, tabuleiro):
-        self.comida = True
+    def CapturarPeca(self, tabuleiro):
+        self.capturada = True
         tabuleiro[self.linha][self.coluna] = None
-        self.linha = -1
-        self.coluna = -1
-        self.start_coluna = 0
-        self.start_linha = 0
+        self.SetCoord(-1,-1,True)
+        self.SetTabCoord(-1,-1,True)
 

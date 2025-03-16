@@ -74,7 +74,7 @@ class Tabuleiro:
 
                 peca = self.tabuleiro[i][j]
 
-                if peca == None or peca.comida ==True:
+                if peca == None:
                     PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
                     continue
 
@@ -137,8 +137,8 @@ class Tabuleiro:
                 peca_between = self.tabuleiro[linha_between][coluna_between]
                 if (peca_between == None or peca_between.cor == peca.cor):
                     return False
-                # else:
-                #     peca_between.ComerPeca(self.tabuleiro)
+                else:
+                    peca_between.CapturarPeca(self.tabuleiro)
 
 
 
