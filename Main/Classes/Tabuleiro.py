@@ -131,17 +131,43 @@ class Tabuleiro:
             if (abs(dif_coluna) > 2 or abs(dif_linha) > 2):
                 return {"canMove": False, "mensage":"Pulou casas demais"}
             
-            if (abs(dif_coluna) == 2 or abs(dif_linha) == 2): 
+            if (abs(dif_coluna) == 2 or abs(dif_linha) == 2):
+
                 linha_between = linha + (orientacao_peca * -1)
+
                 orientacao_coluna = -1 if dif_coluna < 0 else 1
                 coluna_between = coluna + (orientacao_coluna * -1)
+
                 peca_between = self.tabuleiro[linha_between][coluna_between]
+
                 if (peca_between == None or peca_between.cor == peca.cor):
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
                 else:
                     alguma_peca_capturada = True
                     peca_between.CapturarPeca(self.tabuleiro)
+        else:
+            
+            orientacao_coluna = -1 if dif_coluna < 0 else 1
+            orientacao_linha = -1 if dif_linha < 0 else 1
 
+            for dif in range(abs(dif_coluna) - 1):
+
+                ver_linha = peca.start_linha + (dif + 1) * orientacao_linha
+                ver_coluna = peca.start_coluna + (dif + 1) * orientacao_coluna
+
+                content = self.tabuleiro[ver_linha][ver_coluna]
+
+                if (content == None):
+                    continue
+
+                if (content.cor == peca.cor):
+                    return {"canMove": False, "mensage":"Há peças da mesma cor da peça movida no caminho"}
+                
+                if (linha != (ver_linha + 1 * orientacao_linha) or coluna != (ver_coluna + 1 * orientacao_coluna)):
+                    return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
+
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
 
 
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada}
@@ -153,7 +179,7 @@ class Tabuleiro:
         # print(closest)
         
         response = self.VerifyMove(closest[1][0],closest[1][1],peca)
-
+        # print(response)
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
@@ -212,6 +238,40 @@ class Tabuleiro:
                     canCaptureRight = True
             
             return canCaptureLeft or canCaptureRight
+        
+        else:
+            
+            for direct in range(4): # 4 pois são quatro direções: cima-direita, cima-esquerda, baixo-esquerda e baixo-direita
+                orientacao_linha = -1 if direct <= 1 else 1
+                
+                orientacao_coluna = -1 if direct == 1 or direct == 3 else 1
+                
+                for i in range(1,self.tamanho):
+
+                    linha = peca.start_linha + (i * 1) * orientacao_linha
+                    coluna = peca.start_coluna + (i * 1) * orientacao_coluna
+
+                    if (linha >= self.tamanho or linha < 0 or coluna >= self.tamanho or coluna < 0):
+                        break
+
+                    content = self.tabuleiro[linha][coluna]
+                    
+                    if (content == None):
+                        continue
+
+                    if (content.cor == peca.cor):
+                        break
+                    
+                    next_linha = linha + 1 * orientacao_linha
+                    next_coluna = coluna + 1 * orientacao_coluna
+
+                    if (next_linha >= self.tamanho or next_linha < 0 or next_coluna >= self.tamanho or next_coluna < 0):
+                        break
+
+                    next_content = self.tabuleiro[next_linha][next_coluna]
+
+                    if (next_content == None):
+                        return True
         
         return False
 
