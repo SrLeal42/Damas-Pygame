@@ -49,3 +49,7 @@ class Peca:
         self.SetCoord(-1,-1,True)
         self.SetTabCoord(-1,-1,True)
 
+    
+    def TurnPecaInToDama(self):
+        self.tipo = 1
+

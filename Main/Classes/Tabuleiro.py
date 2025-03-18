@@ -1,7 +1,7 @@
 import pygame as PG
 import math
 from Classes.Pecas import Peca
-from Config import LARGURA,ALTURA,WHITE,BLACK,GRAY,NUM_PECAS
+from Config import LARGURA,ALTURA,WHITE,BLACK,GRAY,GOLDEN_BLACK,GOLDEN_WHITE,NUM_PECAS
 
 
 class Tabuleiro:
@@ -79,7 +79,8 @@ class Tabuleiro:
                     continue
 
                 color = WHITE if peca.cor == 0 else BLACK
-
+                if (peca.tipo == 1):
+                    color = GOLDEN_WHITE if color == WHITE else GOLDEN_BLACK
                 # x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
                 # y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
 
@@ -117,6 +118,9 @@ class Tabuleiro:
         if (dif_linha == 0 or dif_coluna == 0):
             return {"canMove": False, "mensage":"Não movel"}
         
+        if(abs(dif_linha) != abs(dif_coluna)):
+            return {"canMove": False, "mensage":"Movimento invalido"}
+
         if (self.tabuleiro[linha][coluna] != None):
             return {"canMove": False, "mensage":"Há uma peça no local"}
         
@@ -193,6 +197,11 @@ class Tabuleiro:
 
         peca.SetCoord(closest[0][0],closest[0][1],True)
         peca.SetTabCoord(closest[1][0],closest[1][1],True)
+
+        turn = self.TurnPecaInToDamaVerification(peca)
+
+        if(turn):
+            peca.TurnPecaInToDama()
 
         return response
     
@@ -276,7 +285,14 @@ class Tabuleiro:
         return False
 
 
-        
-
+    def TurnPecaInToDamaVerification(self, peca:Peca):
+        # if (peca.linha == self.tamanho-1):
+        #     if (peca.cor == 1 and peca.tipo == 0):
+        #         return True
+        # elif(peca.linha == 0):
+        #     if (peca.cor == 0 and peca.tipo == 0):
+        #         return True
+            
+        return (peca.linha == self.tamanho-1 and (peca.cor == 1 and peca.tipo == 0)) or (peca.linha == 0 and (peca.cor == 0 and peca.tipo == 0))
 
 
