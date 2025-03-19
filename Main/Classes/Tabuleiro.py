@@ -1,7 +1,7 @@
 import pygame as PG
 import math
 from Classes.Pecas import Peca
-from Config import LARGURA,ALTURA,WHITE,BLACK,GRAY,GOLDEN_BLACK,GOLDEN_WHITE,NUM_PECAS
+from Config import LARGURA,ALTURA,WHITE,BLACK,GRAY,GOLDEN_BLACK,GOLDEN_WHITE,DARK_GRAY,NUM_PECAS
 
 
 class Tabuleiro:
@@ -69,21 +69,35 @@ class Tabuleiro:
         #              (LARGURA/2 + (-x_OffSet + (x_OffSet/4 * 0))- Peca.tamanho, ALTURA/2 + (-y_OffSet + (y_OffSet/4 * self.tamanho))- Peca.tamanho)
         #              )
 
+        # Desenhando os quadrados
         for i in range(self.tamanho):
             for j in range(self.tamanho):
 
                 peca = self.tabuleiro[i][j]
+                x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
+                y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
 
+                if peca == None and j % 2 == i % 2:
+                    quad_tam = 63
+                    PG.draw.rect(window,DARK_GRAY,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
+                    # PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
+
+                
+                
+
+
+                
+        # Desenhado as peças 
+        for i in range(self.tamanho):
+            for j in range(self.tamanho):
+                
+                peca = self.tabuleiro[i][j]
                 if peca == None:
-                    PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
                     continue
-
                 color = WHITE if peca.cor == 0 else BLACK
+                
                 if (peca.tipo == 1):
                     color = GOLDEN_WHITE if color == WHITE else GOLDEN_BLACK
-                # x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
-                # y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
-
 
                 PG.draw.circle(window,color,(peca.x,peca.y),peca.tamanho)
 
@@ -104,7 +118,7 @@ class Tabuleiro:
                     closest_dist = dist
                     closest = [(x2,y2),(i,j)]
 
-        print(closest)
+        # print(closest)
         return closest
 
 

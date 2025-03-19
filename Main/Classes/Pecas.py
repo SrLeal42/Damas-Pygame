@@ -12,7 +12,7 @@ class Peca:
     y = 0
     start_x = 0
     start_y = 0
-    tamanho = 15
+    tamanho = 20
     capturada = False
 
     def __init__(self,cor:int,linha:int,coluna:int,x=0,y=0,tipo=0):
