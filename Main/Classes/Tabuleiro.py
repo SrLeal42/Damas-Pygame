@@ -86,20 +86,34 @@ class Tabuleiro:
                 
 
 
-                
+        peca_being_dragged = None
+
         # Desenhado as peças 
         for i in range(self.tamanho):
             for j in range(self.tamanho):
                 
                 peca = self.tabuleiro[i][j]
-                if peca == None:
-                    continue
-                color = WHITE if peca.cor == 0 else BLACK
                 
-                if (peca.tipo == 1):
-                    color = GOLDEN_WHITE if color == WHITE else GOLDEN_BLACK
+                if (peca == None):
+                    continue
+                
+                if (peca.sendo_arrastada):
+                    peca_being_dragged = peca
+                    continue
+                    
+                grupo_sprite = PG.sprite.Group(peca)
+                grupo_sprite.draw(window)
+                # color = WHITE if peca.cor == 0 else BLACK
+                
+                # if (peca.tipo == 1):
+                #     color = GOLDEN_WHITE if color == WHITE else GOLDEN_BLACK
 
-                PG.draw.circle(window,color,(peca.x,peca.y),peca.tamanho)
+                # PG.draw.circle(window,color,(peca.x,peca.y),peca.tamanho)
+
+        # Desenhando a peça que esta sendo arrastada por ultimo para deixar ela sobre as outras
+        if(peca_being_dragged != None):
+            grupo_sprite = PG.sprite.Group(peca_being_dragged)
+            grupo_sprite.draw(window)
 
     def ClosePlace(self,x1,y1):
 

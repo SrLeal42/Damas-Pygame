@@ -35,11 +35,17 @@ def HandlePecasClick():
     for linha in range(current_game.tabuleiro.tamanho):
         for coluna in range(current_game.tabuleiro.tamanho):
             p = current_game.tabuleiro.tabuleiro[linha][coluna]
+
             if p == None:
                 continue
-            x = p.x - p.tamanho
-            y = p.y - p.tamanho
-            ret = PG.Rect(x, y, p.tamanho*2, p.tamanho*2)
+
+            # x = p.x - p.tamanho
+            # y = p.y - p.tamanho
+
+            # ret = PG.Rect(x, y, p.tamanho*2, p.tamanho*2)
+            
+            ret = p.rect
+
             colidiu = ret.collidepoint(mouse_pos)
             
             # PG.draw.rect(window, BLACK, ret)
@@ -53,6 +59,7 @@ def HandlePecasClick():
 
                 peca_being_dragged = p
                 p.SetCoord(mouse_pos[0],mouse_pos[1])
+                p.sendo_arrastada = True
                 break
 
 
@@ -68,9 +75,8 @@ def HandlePecasRelease():
     response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged,current_game)
     last_peca_moved = peca_being_dragged
 
-
+    peca_being_dragged.sendo_arrastada = False
     peca_being_dragged = None
-    
 
     if (not response["canMove"]):
         return
@@ -98,6 +104,10 @@ def DrawCorRodada():
     text_render = fonte_principal.render(text, True, BLACK)  # Atualiza o texto
 
     window.blit(text_render, (LARGURA/2 - 50, 10))
+
+
+
+
 
 while(running):
 

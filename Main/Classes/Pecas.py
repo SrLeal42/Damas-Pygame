@@ -1,6 +1,8 @@
+import pygame as PG
+from Config import PATH_SPRITE_BRANCA,PATH_SPRITE_PRETA
 
 
-class Peca:
+class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
 
     cor = -1 # 0 = Branca 1 = Preto
     tipo = 0
@@ -12,11 +14,25 @@ class Peca:
     y = 0
     start_x = 0
     start_y = 0
-    tamanho = 20
+    # tamanho = 20
+    escala = 1.5
     capturada = False
+    sendo_arrastada = False
 
     def __init__(self,cor:int,linha:int,coluna:int,x=0,y=0,tipo=0):
         self.cor = cor
+        # Inicializa a classe Sprite
+        super().__init__()
+        # image é um atributo da classe Sprite 
+        self.image = PG.image.load(PATH_SPRITE_PRETA).convert_alpha() if cor == 1 else PG.image.load(PATH_SPRITE_BRANCA).convert_alpha()
+        
+        new_size = int(self.image.get_width() * self.escala)
+        
+        self.image = PG.transform.scale(self.image, (new_size, new_size))
+
+        # rect té um atributo da classe Sprite
+        self.rect = self.image.get_rect(center=(x, y))
+
         self.linha = linha
         self.coluna = coluna
         self.x = x
@@ -29,6 +45,8 @@ class Peca:
     def SetCoord(self,x:float, y:float,setStartCoord=False):
         self.x = x
         self.y = y
+
+        self.rect = self.image.get_rect(center=(x, y))
 
         if setStartCoord:
             self.start_x = x
