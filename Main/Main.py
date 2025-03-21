@@ -19,9 +19,9 @@ last_peca_moved = None
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 
-def CreateGame():
+def CreateGame(jogo:str):
     global current_game 
-    current_game = Game()
+    current_game = Game(jogo)
 
 
 
@@ -54,7 +54,7 @@ def HandlePecasClick():
                 if (current_game.cor_rodada != p.cor):
                     break
 
-                if (current_game.sequencia_captura and p != last_peca_moved):# Caso o player esteja em uma sequenecia de captura e ele deve mover a apenas a ultima peça que ele moveu  
+                if (current_game.sequencia_captura and p != last_peca_moved):# Caso o player esteja em uma sequencia de captura e ele deve mover a apenas a ultima peça que ele moveu  
                     break
 
                 peca_being_dragged = p
@@ -114,7 +114,7 @@ while(running):
     window.fill(GRAY)
 
     if (current_game == None):
-         CreateGame()
+         CreateGame("xadrez")
 
     current_game.tabuleiro.DesenhaTabuleiro(window)
 
@@ -130,9 +130,15 @@ while(running):
     for evento in PG.event.get():
         if evento.type == PG.QUIT:
             running = False
+
+
+
             # for i in range(current_game.tabuleiro.tamanho):
             #     for j in range(current_game.tabuleiro.tamanho):
-            #         print(current_game.tabuleiro.tabuleiro[i][j])
+            #         if (current_game.tabuleiro.tabuleiro[i][j] != None):
+            #             print(current_game.tabuleiro.tabuleiro[i][j])
+            #         else:
+            #             print(None)
 
     PG.display.flip()
 

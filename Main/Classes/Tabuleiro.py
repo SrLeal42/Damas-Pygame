@@ -1,7 +1,7 @@
 import pygame as PG
 import math
 from Classes.Pecas import Peca
-from Config import LARGURA,ALTURA,WHITE,BLACK,GRAY,GOLDEN_BLACK,GOLDEN_WHITE,DARK_GRAY,NUM_PECAS
+from Config import LARGURA,ALTURA,NUM_PECAS_XADREZ,WHITE,BLACK,GRAY,GOLDEN_BLACK,GOLDEN_WHITE,DARK_GRAY
 
 
 class Tabuleiro:
@@ -23,34 +23,100 @@ class Tabuleiro:
             self.tabuleiro.append(coluna)
 
 
-    def AdicionaPecasAoTabuleiro(self,Pecas, cor:int):
+    def AdicionaPecasAoTabuleiro(self,Pecas,jogo:str,cor:int):
 
         indexPecas = 0
         indexlinhas = 0
-        pularLinhas = 5 if cor == 1 else 0 # Dependendo da cor da peca pular um numero de linhas
+        pularLinhas = 0
+        
 
-        for i in range(self.tamanho):
-            if i < pularLinhas:
-                continue
-            else:
-                indexlinhas += 1
+        if (jogo == "damas"):
+            
+            pularLinhas = 5 if cor == 1 else 0 # Dependendo da cor da peca pular um numero de linhas
 
-            if indexlinhas > 3:
-                break
+            for i in range(self.tamanho):
+                if i < pularLinhas:
+                    continue
+                else:
+                    indexlinhas += 1
 
-            for j in range(self.tamanho):
-                if j%2 == i%2:
+                if indexlinhas > 3:
+                    break
+
+                for j in range(self.tamanho):
+                    if j%2 == i%2:
+                        continue
+
+                    x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)) # calculando a posição na tela 
+                    y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
+
+                    Pecas[indexPecas].SetCoord(x,y,True)
+                    Pecas[indexPecas].SetTabCoord(i,j,True)
+
+                    self.tabuleiro[i][j] = Pecas[indexPecas]
+                    indexPecas += 1
+
+        elif (jogo == "xadrez"):
+            
+            pularLinhas = 6 if cor == 1 else 0 # Dependendo da cor da peca pular um numero de linhas
+
+            pecas_count = 0 # Contador de peças que foram alocadas no tabuleiro
+            
+            for i in range(self.tamanho):
+                if i < pularLinhas:
                     continue
 
-                x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)) # calculando a posição na tela 
-                y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
-
-                Pecas[indexPecas].SetCoord(x,y,True)
-                Pecas[indexPecas].SetTabCoord(i,j,True)
-
-                self.tabuleiro[i][j] = Pecas[indexPecas]
-                indexPecas += 1
+                indexlinhas += 1
                 
+                if indexlinhas > 2:
+                    break
+
+                for j in range(self.tamanho):
+
+                    peca = Pecas[indexPecas]   
+
+                    y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
+
+                    if (peca.tipo == 2 or peca.tipo == 6 or peca.tipo == 7):
+
+                        x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
+
+                        peca.SetCoord(x,y,True)
+                        peca.SetTabCoord(i,j,True)
+
+                        self.tabuleiro[i][j] = peca
+                        
+                        indexPecas += 1
+                        pecas_count += 1
+
+                    elif (peca.tipo > 2 and peca.tipo < 6): # (peca.tipo > 2 and peca.tipo < 6):
+ 
+                        x_1 = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
+                        
+                        peca.SetCoord(x_1,y,True)
+                        peca.SetTabCoord(i,j,True)
+
+                        self.tabuleiro[i][j] = peca
+
+                        # Partimos do presuposto que a proxima peça é do mesmo tipo que a anterior
+                        proxima_peca = Pecas[indexPecas+1]
+                        
+                        coluna_inversa = (self.tamanho - 1) - j
+
+                        x_2 = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * coluna_inversa))
+
+                        proxima_peca.SetCoord(x_2,y,True)
+                        proxima_peca.SetTabCoord(i,coluna_inversa,True)
+                        
+                        self.tabuleiro[i][coluna_inversa] = proxima_peca
+
+                        indexPecas += 2
+                        pecas_count += 2
+
+                    if (pecas_count == NUM_PECAS_XADREZ//2 or pecas_count == NUM_PECAS_XADREZ):
+                        break
+
+
 
             
 
@@ -77,7 +143,7 @@ class Tabuleiro:
                 x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
                 y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
 
-                if peca == None and j % 2 == i % 2:
+                if j % 2 == i % 2:
                     quad_tam = 63
                     PG.draw.rect(window,DARK_GRAY,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
                     # PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
@@ -141,29 +207,32 @@ class Tabuleiro:
         dif_linha = linha - peca.start_linha
         dif_coluna = coluna - peca.start_coluna
         
+        dif_linha_abs =  abs(dif_linha)
+        dif_coluna_abs =  abs(dif_coluna)
+
         alguma_peca_capturada = False
 
-        if (dif_linha == 0 or dif_coluna == 0):
+        if (dif_linha == 0 and dif_coluna == 0):
             return {"canMove": False, "mensage":"Não movel"}
-        
-        if(abs(dif_linha) != abs(dif_coluna)):
-            return {"canMove": False, "mensage":"Movimento invalido"}
-
-        if (self.tabuleiro[linha][coluna] != None):
-            return {"canMove": False, "mensage":"Há uma peça no local"}
         
         # Peça normal
         if (peca.tipo == 0):
+
+            if(dif_linha_abs != dif_coluna_abs):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+
+            if (self.tabuleiro[linha][coluna] != None):
+                return {"canMove": False, "mensage":"Há uma peça no local"}
 
             # Verificando a direção
             if ((orientacao_peca < 0) != (dif_linha < 0)):
                 return {"canMove": False, "mensage":"Direção incorreta"}
             
             # Verificando quantidade de quadrados pulados 
-            if (abs(dif_coluna) > 2 or abs(dif_linha) > 2):
+            if (dif_coluna_abs > 2 or dif_linha_abs > 2):
                 return {"canMove": False, "mensage":"Pulou casas demais"}
             
-            if (abs(dif_coluna) == 2 or abs(dif_linha) == 2):
+            if (dif_coluna_abs == 2 or dif_linha_abs == 2):
 
                 linha_between = linha + (orientacao_peca * -1)
 
@@ -177,12 +246,14 @@ class Tabuleiro:
                 else:
                     alguma_peca_capturada = True
                     peca_between.CapturarPeca(self.tabuleiro)
-        else:
+
+            # Peça Damas
+        elif (peca.tipo == 1):
             
             orientacao_coluna = -1 if dif_coluna < 0 else 1
             orientacao_linha = -1 if dif_linha < 0 else 1
 
-            for dif in range(abs(dif_coluna) - 1):
+            for dif in range(dif_coluna_abs - 1):
 
                 ver_linha = peca.start_linha + (dif + 1) * orientacao_linha
                 ver_coluna = peca.start_coluna + (dif + 1) * orientacao_coluna
@@ -202,6 +273,77 @@ class Tabuleiro:
                 content.CapturarPeca(self.tabuleiro)
 
 
+            # Peça Peão
+        elif (peca.tipo == 2):
+            
+            if (dif_linha == 0):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+            
+            if ((orientacao_peca < 0) != (dif_linha < 0)):
+                return {"canMove": False, "mensage":"Direção incorreta"}
+
+            if ((dif_linha_abs > 2 or dif_coluna_abs > 1) or (dif_linha == 2 and not peca.primeiro_movimento)):
+                return {"canMove": False, "mensage":"Pulou quadrados demais"}
+
+            content = self.tabuleiro[linha][coluna]
+
+            if (dif_linha_abs == 1 and dif_coluna_abs == 1):
+                
+                if (content == None):
+                    return {"canMove": False, "mensage":"Movimento invalido"}
+                
+                if (content.cor == peca.cor):
+                    return {"canMove": False, "mensage":"Há uma peça da mesma cor no local"}
+                
+                alguma_peca_capturada = True
+
+                content.CapturarPeca(self.tabuleiro)
+            
+            elif (dif_linha_abs <= 2):
+
+                if (content != None):
+                    return {"canMove": False, "mensage":"Há uma peça no local"}
+
+        elif (peca.tipo == 3):
+
+            if (dif_linha_abs != 0 and dif_coluna_abs != 0):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+            
+            content = self.tabuleiro[linha][coluna]
+
+
+            if (content != None and content.cor == peca.cor):
+                return {"canMove": False, "mensage":"Há uma peça da mesma cor no local"}
+
+            qtd_quadrados_pulados = dif_coluna_abs if dif_coluna_abs > dif_linha_abs else dif_linha_abs
+
+            direcao_mov = "horizontal" if dif_coluna_abs > dif_linha_abs else "vertical"
+
+            orientacao_coluna = -1 if dif_coluna < 0 else 1
+            orientacao_linha = -1 if dif_linha < 0 else 1
+
+            for i in range(qtd_quadrados_pulados -1):
+                
+                _linha = peca.start_linha
+                _coluna = peca.start_coluna
+
+                if (direcao_mov == "vertical"):
+                    _linha = peca.start_linha + (i + 1) * orientacao_linha
+                else:
+                    _coluna = peca.start_coluna + (i + 1) * orientacao_coluna
+
+                print(f"{_linha} {_coluna}")
+
+                _content = self.tabuleiro[_linha][_coluna]
+
+                if (_content != None):
+                    return {"canMove": False, "mensage":"Há uma peça no caminho"}
+                
+            if (content != None):
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
+
+
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada}
 
 
@@ -211,7 +353,7 @@ class Tabuleiro:
         # print(closest)
         
         response = self.VerifyMove(closest[1][0],closest[1][1],peca)
-        # print(response)
+        print(response)
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
@@ -226,10 +368,13 @@ class Tabuleiro:
         peca.SetCoord(closest[0][0],closest[0][1],True)
         peca.SetTabCoord(closest[1][0],closest[1][1],True)
 
-        turn = self.TurnPecaInToDamaVerification(peca)
+        peca.primeiro_movimento = False
 
-        if(turn):
-            peca.TurnPecaInToDama()
+        if (game.jogo == "damas"):
+            turn = self.TurnPecaInToDamaVerification(peca)
+
+            if(turn):
+                peca.TurnPecaInToDama()
 
         return response
     
@@ -276,7 +421,7 @@ class Tabuleiro:
             
             return canCaptureLeft or canCaptureRight
         
-        else:
+        elif (peca.tipo == 1):
             
             for direct in range(4): # 4 pois são quatro direções: cima-direita, cima-esquerda, baixo-esquerda e baixo-direita
                 orientacao_linha = -1 if direct <= 1 else 1
@@ -314,13 +459,6 @@ class Tabuleiro:
 
 
     def TurnPecaInToDamaVerification(self, peca:Peca):
-        # if (peca.linha == self.tamanho-1):
-        #     if (peca.cor == 1 and peca.tipo == 0):
-        #         return True
-        # elif(peca.linha == 0):
-        #     if (peca.cor == 0 and peca.tipo == 0):
-        #         return True
-            
         return (peca.linha == self.tamanho-1 and (peca.cor == 1 and peca.tipo == 0)) or (peca.linha == 0 and (peca.cor == 0 and peca.tipo == 0))
 
 
