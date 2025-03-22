@@ -269,17 +269,19 @@ class Tabuleiro:
                 ver_linha = peca.start_linha + (dif + 1) * orientacao_linha
                 ver_coluna = peca.start_coluna + (dif + 1) * orientacao_coluna
 
-                if (content == None):
+                _content = self.tabuleiro[ver_linha][ver_coluna]
+
+                if (_content == None):
                     continue
 
-                if (content.cor == peca.cor):
+                if (_content.cor == peca.cor):
                     return {"canMove": False, "mensage":"Há peças da mesma cor da peça movida no caminho"}
                 
                 if (linha != (ver_linha + 1 * orientacao_linha) or coluna != (ver_coluna + 1 * orientacao_coluna)):
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
 
                 alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
+                _content.CapturarPeca(self.tabuleiro)
 
 
             # Peça Peão
