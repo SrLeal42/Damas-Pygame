@@ -81,7 +81,7 @@ def HandlePecasRelease():
     if (not response["canMove"]):
         return
 
-    if (response["pecaCapturada"] or current_game.sequencia_captura):
+    if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
         canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
         
         current_game.sequencia_captura = canCapture

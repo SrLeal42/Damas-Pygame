@@ -215,6 +215,11 @@ class Tabuleiro:
         if (dif_linha == 0 and dif_coluna == 0):
             return {"canMove": False, "mensage":"Não movel"}
         
+        content = self.tabuleiro[linha][coluna]
+
+        if (content != None and content.cor == peca.cor):
+            return {"canMove": False, "mensage":"Há uma peça da mesma cor no local"}
+        
         # Peça normal
         if (peca.tipo == 0):
 
@@ -250,6 +255,12 @@ class Tabuleiro:
             # Peça Damas
         elif (peca.tipo == 1):
             
+            if(dif_linha_abs != dif_coluna_abs):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+
+            if (self.tabuleiro[linha][coluna] != None):
+                return {"canMove": False, "mensage":"Há uma peça no local"}
+
             orientacao_coluna = -1 if dif_coluna < 0 else 1
             orientacao_linha = -1 if dif_linha < 0 else 1
 
@@ -257,8 +268,6 @@ class Tabuleiro:
 
                 ver_linha = peca.start_linha + (dif + 1) * orientacao_linha
                 ver_coluna = peca.start_coluna + (dif + 1) * orientacao_coluna
-
-                content = self.tabuleiro[ver_linha][ver_coluna]
 
                 if (content == None):
                     continue
@@ -282,18 +291,13 @@ class Tabuleiro:
             if ((orientacao_peca < 0) != (dif_linha < 0)):
                 return {"canMove": False, "mensage":"Direção incorreta"}
 
-            if ((dif_linha_abs > 2 or dif_coluna_abs > 1) or (dif_linha == 2 and not peca.primeiro_movimento)):
+            if ((dif_linha_abs > 2 or dif_coluna_abs > 1) or (dif_linha_abs == 2 and not peca.primeiro_movimento)):
                 return {"canMove": False, "mensage":"Pulou quadrados demais"}
-
-            content = self.tabuleiro[linha][coluna]
 
             if (dif_linha_abs == 1 and dif_coluna_abs == 1):
                 
                 if (content == None):
                     return {"canMove": False, "mensage":"Movimento invalido"}
-                
-                if (content.cor == peca.cor):
-                    return {"canMove": False, "mensage":"Há uma peça da mesma cor no local"}
                 
                 alguma_peca_capturada = True
 
@@ -303,17 +307,14 @@ class Tabuleiro:
 
                 if (content != None):
                     return {"canMove": False, "mensage":"Há uma peça no local"}
+                
+                if (dif_linha_abs == 2 and (self.tabuleiro[linha - (1 * orientacao_peca)][coluna] != None)):
+                    return {"canMove": False, "mensage":"O peão não pode pular peças"}
 
         elif (peca.tipo == 3):
 
             if (dif_linha_abs != 0 and dif_coluna_abs != 0):
                 return {"canMove": False, "mensage":"Movimento invalido"}
-            
-            content = self.tabuleiro[linha][coluna]
-
-
-            if (content != None and content.cor == peca.cor):
-                return {"canMove": False, "mensage":"Há uma peça da mesma cor no local"}
 
             qtd_quadrados_pulados = dif_coluna_abs if dif_coluna_abs > dif_linha_abs else dif_linha_abs
 
@@ -332,7 +333,7 @@ class Tabuleiro:
                 else:
                     _coluna = peca.start_coluna + (i + 1) * orientacao_coluna
 
-                print(f"{_linha} {_coluna}")
+                # print(f"{_linha} {_coluna}")
 
                 _content = self.tabuleiro[_linha][_coluna]
 
@@ -343,7 +344,80 @@ class Tabuleiro:
                 alguma_peca_capturada = True
                 content.CapturarPeca(self.tabuleiro)
 
+        elif (peca.tipo == 4):
 
+            if (dif_linha_abs != 2 or dif_coluna_abs != 1):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+
+            if (content != None):
+
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
+
+        elif (peca.tipo == 5):
+            
+            if(dif_linha_abs != dif_coluna_abs):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+
+            orientacao_coluna = -1 if dif_coluna < 0 else 1
+            orientacao_linha = -1 if dif_linha < 0 else 1
+
+            for dif in range(dif_coluna_abs - 1):
+
+                ver_linha = peca.start_linha + (dif + 1) * orientacao_linha
+                ver_coluna = peca.start_coluna + (dif + 1) * orientacao_coluna
+
+                _content = self.tabuleiro[ver_linha][ver_coluna]
+
+                if (_content != None):
+                    return {"canMove": False, "mensage":"Há peças no caminho"}
+
+
+
+            if (content != None):
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
+
+        elif (peca.tipo == 6):
+
+            if((dif_linha_abs != dif_coluna_abs) and (dif_linha_abs != 0 and dif_coluna_abs != 0)):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+
+            qtd_quadrados_pulados = dif_coluna_abs if dif_coluna_abs > dif_linha_abs else dif_linha_abs
+
+            orientacao_coluna = -1 if dif_coluna < 0 else 1
+            orientacao_linha = -1 if dif_linha < 0 else 1
+
+            index_linha = 0
+            index_coluna = 0
+
+            for i in range(qtd_quadrados_pulados -1 ):
+                index_linha += 1 if index_linha < dif_linha_abs else 0
+                index_coluna += 1 if index_coluna < dif_coluna_abs else 0
+
+                _linha = peca.start_linha + index_linha * orientacao_linha
+                _coluna = peca.start_coluna + index_coluna * orientacao_coluna
+                # print(f"{_linha},{_coluna}")
+                _content = self.tabuleiro[_linha][_coluna]
+
+                if (_content != None):
+                    return {"canMove": False, "mensage":"Há peças no caminho"}
+
+            if (content != None):
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
+        
+        
+        elif (peca.tipo == 7):
+
+            if(dif_linha_abs > 1 or dif_coluna_abs > 1):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+            
+            if (content != None):
+                alguma_peca_capturada = True
+                content.CapturarPeca(self.tabuleiro)
+      
+        
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada}
 
 
@@ -353,7 +427,7 @@ class Tabuleiro:
         # print(closest)
         
         response = self.VerifyMove(closest[1][0],closest[1][1],peca)
-        print(response)
+        
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
@@ -370,12 +444,17 @@ class Tabuleiro:
 
         peca.primeiro_movimento = False
 
+        turn = False # Deve ou não transforma a peça em Dama
+
         if (game.jogo == "damas"):
             turn = self.TurnPecaInToDamaVerification(peca)
 
             if(turn):
                 peca.TurnPecaInToDama()
 
+        response["turnThisRound"] = turn
+        
+        print(response)
         return response
     
     def VerifyPecaCanCapture(self, peca:Peca):
