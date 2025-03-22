@@ -1,2 +1,2 @@
 # Damas-Pygame
-Criando um jogo de damas utilizando a biblioteca Pygame
+Criando um jogo de damas e xadrez utilizando a biblioteca Pygame
