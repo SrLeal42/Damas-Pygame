@@ -202,6 +202,13 @@ class Tabuleiro:
         return closest
 
 
+    def CalculateScreenPosition(self, linha, coluna):
+        x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * coluna)) # calculando a posição na tela 
+        y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * linha))
+
+        return(x,y)
+
+
     def VerifyMove(self, linha:int, coluna:int, peca:Peca):
         orientacao_peca = -1 if peca.cor == 0 else 1
         dif_linha = linha - peca.start_linha
@@ -211,6 +218,8 @@ class Tabuleiro:
         dif_coluna_abs =  abs(dif_coluna)
 
         alguma_peca_capturada = False
+
+        roque = None # Variavel para armazenar as informações do roque
 
         if (dif_linha == 0 and dif_coluna == 0):
             return {"canMove": False, "mensage":"Não movel"}
@@ -412,15 +421,46 @@ class Tabuleiro:
         
         elif (peca.tipo == 7):
 
-            if(dif_linha_abs > 1 or dif_coluna_abs > 1):
+            if(dif_linha_abs > 1 or dif_coluna_abs > 2):
                 return {"canMove": False, "mensage":"Movimento invalido"}
             
-            if (content != None):
-                alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
-      
+            if (dif_coluna_abs < 2):
+                
+                if (content != None):
+                    alguma_peca_capturada = True
+                    content.CapturarPeca(self.tabuleiro)
+            # Verificando se é um Roque
+            else:
+                
+                if (content != None):
+                    return {"canMove": False, "mensage":"Movimento invalido"}
+                
+                orientacao_coluna = -1 if dif_coluna < 0 else 1
+                _coluna_atras = peca.start_coluna + 1 * orientacao_coluna
+                
+                _content = self.tabuleiro[linha][_coluna_atras]
+                # Verificando se há uma peça entre a posição inicial e a final
+                if (_content != None):
+                    return {"canMove": False, "mensage":"Movimento invalido"}
+                
+                _coluna_afrente = coluna + 1 * orientacao_coluna
+                
+                _content = self.tabuleiro[linha][_coluna_afrente]
+                
+                if (_content == None or _content.tipo != 3):
+                    return {"canMove": False, "mensage":"Movimento invalido"}
+                
+                if (not peca.primeiro_movimento or not _content.primeiro_movimento):
+                    return {"canMove": False, "mensage":"Roque invalido"}
+
+                roque = {"linha_torre_inicial":linha,
+                         "coluna_torre_inicial":_coluna_afrente,
+                         "linha_torre_final":linha,
+                         "coluna_torre_final":_coluna_atras}
+                
+
         
-        return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada}
+        return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada, "roque":roque}
 
 
     def TryChangePecaPlace(self, peca, game):
@@ -453,6 +493,23 @@ class Tabuleiro:
 
             if(turn):
                 peca.TurnPecaInToDama()
+
+        else:
+            
+            roque = response["roque"]
+            
+            if (roque):
+                torre = self.tabuleiro[roque["linha_torre_inicial"]][roque["coluna_torre_inicial"]]
+
+                coord = self.CalculateScreenPosition(roque["linha_torre_final"],roque["coluna_torre_final"])
+                
+                self.tabuleiro[torre.start_linha][torre.start_coluna] = None
+                self.tabuleiro[roque["linha_torre_final"]][roque["coluna_torre_final"]] = torre
+
+                torre.SetCoord(coord[0],coord[1],True)
+                torre.SetTabCoord(roque["linha_torre_final"],roque["coluna_torre_final"])
+                
+
 
         response["turnThisRound"] = turn
         
