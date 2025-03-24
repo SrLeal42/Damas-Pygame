@@ -66,9 +66,13 @@ class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
 
     def CapturarPeca(self, tabuleiro):
         self.capturada = True
-        tabuleiro[self.linha][self.coluna] = None
+        tabuleiro.tabuleiro[self.linha][self.coluna] = None
         self.SetCoord(-1,-1,True)
         self.SetTabCoord(-1,-1,True)
+        if (self.cor == 0):
+            tabuleiro.num_brancas_capturadas += 1
+        else:
+            tabuleiro.num_pretas_capturadas += 1
 
     
     def TurnPecaInToDama(self):

@@ -8,6 +8,10 @@ class Game:
 
     jogo = ""
 
+    gameEnd = False
+
+    colorWinner = -1
+
     tabuleiro = None
     PecasBrancas = None
     PecasPretas = None
@@ -77,12 +81,38 @@ class Game:
         
         return P
 
-
-
     
     def EndTurn(self):
         self.num_rodadas += 1
         if (not self.sequencia_captura):
             self.cor_rodada = 0 if self.cor_rodada == 1 else 1
         # self.sequencia_captura = False
+
+
+
+    def WinningUpdate(self):
+
+        response = {"gameEnd":False, "colorWinner":-1}
+
+        if (self.jogo == "damas"):
+
+            response["gameEnd"] = (NUM_PECAS_DAMAS <= self.tabuleiro.num_brancas_capturadas) or (NUM_PECAS_DAMAS <= self.tabuleiro.num_pretas_capturadas)
+            
+            if (response["gameEnd"]):
+                response["colorWinner"] = 0 if NUM_PECAS_DAMAS <= self.tabuleiro.num_pretas_capturadas else 1
+
+        elif (self.jogo == "xadrez"):
+
+            response["gameEnd"] = self.rei_PB.capturada or self.rei_PP.capturada
+
+            if (response["gameEnd"]):
+                response["colorWinner"] = 0 if self.rei_PP.capturada else 1
+
+        self.gameEnd = response["colorWinner"]
+
+        self.colorWinner = response["colorWinner"]
+
+        return response
+
+    
 

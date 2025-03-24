@@ -11,6 +11,9 @@ class Tabuleiro:
     x_OffSet = 250 # A distancia do primeiro quadrado até o centro da tela no eixo x
     y_OffSet = 250
 
+    num_pretas_capturadas = 0
+    num_brancas_capturadas = 0
+
     def __init__(self):
 
         for i in range(self.tamanho):
@@ -259,7 +262,7 @@ class Tabuleiro:
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
                 else:
                     alguma_peca_capturada = True
-                    peca_between.CapturarPeca(self.tabuleiro)
+                    peca_between.CapturarPeca(self)
 
             # Peça Damas
         elif (peca.tipo == 1):
@@ -290,7 +293,7 @@ class Tabuleiro:
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
 
                 alguma_peca_capturada = True
-                _content.CapturarPeca(self.tabuleiro)
+                _content.CapturarPeca(self)
 
 
             # Peça Peão
@@ -312,7 +315,7 @@ class Tabuleiro:
                 
                 alguma_peca_capturada = True
 
-                content.CapturarPeca(self.tabuleiro)
+                content.CapturarPeca(self)
             
             elif (dif_linha_abs <= 2):
 
@@ -353,7 +356,7 @@ class Tabuleiro:
                 
             if (content != None):
                 alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
+                content.CapturarPeca(self)
 
         elif (peca.tipo == 4):
 
@@ -363,7 +366,7 @@ class Tabuleiro:
             if (content != None):
 
                 alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
+                content.CapturarPeca(self)
 
         elif (peca.tipo == 5):
             
@@ -387,7 +390,7 @@ class Tabuleiro:
 
             if (content != None):
                 alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
+                content.CapturarPeca(self)
 
         elif (peca.tipo == 6):
 
@@ -416,7 +419,7 @@ class Tabuleiro:
 
             if (content != None):
                 alguma_peca_capturada = True
-                content.CapturarPeca(self.tabuleiro)
+                content.CapturarPeca(self)
         
         
         elif (peca.tipo == 7):
@@ -428,7 +431,7 @@ class Tabuleiro:
                 
                 if (content != None):
                     alguma_peca_capturada = True
-                    content.CapturarPeca(self.tabuleiro)
+                    content.CapturarPeca(self)
             # Verificando se é um Roque
             else:
                 
@@ -518,7 +521,7 @@ class Tabuleiro:
 
         response["turnThisRound"] = turn
         
-        print(response)
+        # print(response)
         return response
     
     def VerifyPecaCanCapture(self, peca:Peca):

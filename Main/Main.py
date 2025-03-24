@@ -12,12 +12,16 @@ running = True
 window = PG.display.set_mode((LARGURA,ALTURA))
 PG.display.set_caption("Damas")
 
+state = "gaming"
+
 current_game = None
 
 peca_being_dragged = None
 last_peca_moved = None
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
+
+fonte_win_text = PG.font.Font(FONTE_PRIN, 60)
 
 def CreateGame(jogo:str):
     global current_game 
@@ -67,7 +71,7 @@ def HandlePecasClick():
 
 
 def HandlePecasRelease():
-    global peca_being_dragged, current_game, last_peca_moved
+    global peca_being_dragged, current_game, last_peca_moved, state
 
     if peca_being_dragged == None:
         return
@@ -87,7 +91,14 @@ def HandlePecasRelease():
         current_game.sequencia_captura = canCapture
         # print(canCapture)
 
+    winnigResponse = current_game.WinningUpdate()
+
+    if (winnigResponse["gameEnd"]):
+        state = "winScreen"
+        print(winnigResponse)
+
     current_game.EndTurn()
+
 
 
 
@@ -105,6 +116,18 @@ def DrawCorRodada():
 
     window.blit(text_render, (LARGURA/2 - 50, 10))
 
+def DrawWinScreen():
+    global current_game,window
+ 
+    if current_game == None:
+        return
+    
+    text = "As Pretas ganharam" if current_game.colorWinner == 1 else "As Brancas ganharam"
+    
+    text_render = fonte_win_text.render(text, True, BLACK)  # Atualiza o texto
+
+    window.blit(text_render, (LARGURA/2 - 230, ALTURA/2 - 60))
+
 
 
 
@@ -113,19 +136,34 @@ while(running):
 
     window.fill(GRAY)
 
-    if (current_game == None):
-         CreateGame("xadrez")
 
-    current_game.tabuleiro.DesenhaTabuleiro(window)
 
-    DrawCorRodada()
+    if (state == "gaming"):
 
-    mouse = PG.mouse.get_pressed()
+        if (current_game == None):
+            CreateGame("damas")
 
-    if mouse[0]:
-        HandlePecasClick()
-    elif peca_being_dragged:
-        HandlePecasRelease()
+        current_game.tabuleiro.DesenhaTabuleiro(window)
+
+        DrawCorRodada()
+
+        mouse = PG.mouse.get_pressed()
+
+        if mouse[0]:
+            HandlePecasClick()
+        elif peca_being_dragged:
+            HandlePecasRelease()
+    
+    elif (state == "winScreen"):
+
+        if (current_game != None):
+            current_game.tabuleiro.DesenhaTabuleiro(window)
+            DrawCorRodada()
+
+        DrawWinScreen()
+
+
+
 
     for evento in PG.event.get():
         if evento.type == PG.QUIT:
