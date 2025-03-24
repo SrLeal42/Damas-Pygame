@@ -463,7 +463,7 @@ class Tabuleiro:
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada, "roque":roque}
 
 
-    def TryChangePecaPlace(self, peca, game):
+    def TryChangePecaPlace(self, peca:Peca, game):
 
         closest = self.ClosePlace(peca.x,peca.y)
         # print(closest)
@@ -498,6 +498,8 @@ class Tabuleiro:
             
             roque = response["roque"]
             
+            turn = self.TurnPecaIntoRainhaVerification(peca)
+
             if (roque):
                 torre = self.tabuleiro[roque["linha_torre_inicial"]][roque["coluna_torre_inicial"]]
 
@@ -508,7 +510,10 @@ class Tabuleiro:
 
                 torre.SetCoord(coord[0],coord[1],True)
                 torre.SetTabCoord(roque["linha_torre_final"],roque["coluna_torre_final"])
-                
+            
+            elif (turn):
+                peca.TurnPecaInToRainha()
+            
 
 
         response["turnThisRound"] = turn
@@ -598,5 +603,8 @@ class Tabuleiro:
 
     def TurnPecaInToDamaVerification(self, peca:Peca):
         return (peca.linha == self.tamanho-1 and (peca.cor == 1 and peca.tipo == 0)) or (peca.linha == 0 and (peca.cor == 0 and peca.tipo == 0))
+    
+    def TurnPecaIntoRainhaVerification(self, peca:Peca):
+        return (peca.linha == self.tamanho-1 and (peca.cor == 1 and peca.tipo == 2)) or (peca.linha == 0 and (peca.cor == 0 and peca.tipo == 2))
 
 
