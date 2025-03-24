@@ -124,7 +124,7 @@ class Tabuleiro:
             
 
 
-    def DesenhaTabuleiro(self, window):
+    def DesenhaTabuleiro(self, window, p_being_dragged:Peca = None):
         
         # PG.draw.line(window, 
         #              WHITE, 
@@ -142,13 +142,30 @@ class Tabuleiro:
         for i in range(self.tamanho):
             for j in range(self.tamanho):
 
-                peca = self.tabuleiro[i][j]
+                # peca = self.tabuleiro[i][j]
+                
                 x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
                 y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
 
+                quad_tam = 63
+                
+                canMove = False
+                
+                if (p_being_dragged != None):
+                    response = self.VerifyMove(i,j,p_being_dragged)
+                    canMove = response["canMove"]
+                    # print(response)
+
                 if j % 2 == i % 2:
-                    quad_tam = 63
-                    PG.draw.rect(window,DARK_GRAY,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
+                    color = DARK_GRAY if not canMove else GOLDEN_WHITE
+
+                    PG.draw.rect(window,color,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
+                
+                elif (canMove):
+                    
+                    PG.draw.rect(window,GOLDEN_WHITE,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
+
+
                     # PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
 
                 
@@ -213,6 +230,10 @@ class Tabuleiro:
 
 
     def VerifyMove(self, linha:int, coluna:int, peca:Peca):
+        
+        if(peca == None):
+            return {"canMove": False, "mensage":"Peca não atribuida"}
+
         orientacao_peca = -1 if peca.cor == 0 else 1
         dif_linha = linha - peca.start_linha
         dif_coluna = coluna - peca.start_coluna
@@ -220,7 +241,7 @@ class Tabuleiro:
         dif_linha_abs =  abs(dif_linha)
         dif_coluna_abs =  abs(dif_coluna)
 
-        alguma_peca_capturada = False
+        alguma_peca_capturada = None
 
         roque = None # Variavel para armazenar as informações do roque
 
@@ -261,8 +282,8 @@ class Tabuleiro:
                 if (peca_between == None or peca_between.cor == peca.cor):
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
                 else:
-                    alguma_peca_capturada = True
-                    peca_between.CapturarPeca(self)
+                    alguma_peca_capturada = peca_between
+                    # peca_between.CapturarPeca(self)
 
             # Peça Damas
         elif (peca.tipo == 1):
@@ -292,8 +313,8 @@ class Tabuleiro:
                 if (linha != (ver_linha + 1 * orientacao_linha) or coluna != (ver_coluna + 1 * orientacao_coluna)):
                     return {"canMove": False, "mensage":"Não pode se mover para essa casa"}
 
-                alguma_peca_capturada = True
-                _content.CapturarPeca(self)
+                alguma_peca_capturada = _content
+                # _content.CapturarPeca(self)
 
 
             # Peça Peão
@@ -308,14 +329,17 @@ class Tabuleiro:
             if ((dif_linha_abs > 2 or dif_coluna_abs > 1) or (dif_linha_abs == 2 and not peca.primeiro_movimento)):
                 return {"canMove": False, "mensage":"Pulou quadrados demais"}
 
+            if (dif_linha_abs == 2 and dif_coluna_abs == 1):
+                return {"canMove": False, "mensage":"Pulou quadrados demais"}
+
             if (dif_linha_abs == 1 and dif_coluna_abs == 1):
                 
                 if (content == None):
                     return {"canMove": False, "mensage":"Movimento invalido"}
                 
-                alguma_peca_capturada = True
+                alguma_peca_capturada = content
 
-                content.CapturarPeca(self)
+                # content.CapturarPeca(self)
             
             elif (dif_linha_abs <= 2):
 
@@ -355,8 +379,8 @@ class Tabuleiro:
                     return {"canMove": False, "mensage":"Há uma peça no caminho"}
                 
             if (content != None):
-                alguma_peca_capturada = True
-                content.CapturarPeca(self)
+                alguma_peca_capturada = content
+                # content.CapturarPeca(self)
 
         elif (peca.tipo == 4):
 
@@ -365,8 +389,8 @@ class Tabuleiro:
 
             if (content != None):
 
-                alguma_peca_capturada = True
-                content.CapturarPeca(self)
+                alguma_peca_capturada = content
+                # content.CapturarPeca(self)
 
         elif (peca.tipo == 5):
             
@@ -389,8 +413,8 @@ class Tabuleiro:
 
 
             if (content != None):
-                alguma_peca_capturada = True
-                content.CapturarPeca(self)
+                alguma_peca_capturada = content
+                # content.CapturarPeca(self)
 
         elif (peca.tipo == 6):
 
@@ -418,8 +442,8 @@ class Tabuleiro:
                     return {"canMove": False, "mensage":"Há peças no caminho"}
 
             if (content != None):
-                alguma_peca_capturada = True
-                content.CapturarPeca(self)
+                alguma_peca_capturada = content
+                # content.CapturarPeca(self)
         
         
         elif (peca.tipo == 7):
@@ -430,8 +454,8 @@ class Tabuleiro:
             if (dif_coluna_abs < 2):
                 
                 if (content != None):
-                    alguma_peca_capturada = True
-                    content.CapturarPeca(self)
+                    alguma_peca_capturada = content
+                    # content.CapturarPeca(self)
             # Verificando se é um Roque
             else:
                 
@@ -477,9 +501,12 @@ class Tabuleiro:
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
 
-        if (game.sequencia_captura and not response["pecaCapturada"]):
+        if (game.sequencia_captura and response["pecaCapturada"] == None):
             peca.SetCoord(peca.start_x,peca.start_y,True)
-            return {"canMove":False, "mensage":"Em uma sequencia de captura voce deve se movimentar apenas capturando outras peças", "pecaCapturada":False}
+            return {"canMove":False, "mensage":"Em uma sequencia de captura voce deve se movimentar apenas capturando outras peças", "pecaCapturada":None}
+
+        if (response["pecaCapturada"]):
+            response["pecaCapturada"].CapturarPeca(self)
 
         self.tabuleiro[peca.start_linha][peca.start_coluna] = None
         self.tabuleiro[closest[1][0]][closest[1][1]] = peca

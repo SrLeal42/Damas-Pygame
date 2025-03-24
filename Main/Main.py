@@ -141,9 +141,9 @@ while(running):
     if (state == "gaming"):
 
         if (current_game == None):
-            CreateGame("damas")
+            CreateGame("xadrez")
 
-        current_game.tabuleiro.DesenhaTabuleiro(window)
+        current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged)
 
         DrawCorRodada()
 
