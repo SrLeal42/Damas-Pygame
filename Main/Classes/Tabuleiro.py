@@ -27,6 +27,9 @@ class Tabuleiro:
 
     def ResetTabuleiro(self):
         
+        self.num_pretas_capturadas = 0
+        self.num_brancas_capturadas = 0
+
         self.tabuleiro = []
 
         for i in range(self.tamanho):

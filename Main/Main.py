@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,FONTE_PRIN
+from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -21,7 +21,7 @@ quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
 damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/PECA_BRANCA.png", 4)
 xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/PECA_PRETA.png", 4)
 
-pause_button = Button(80,80,"Main/Sprites/Cavalo.png", 2)
+pause_button = Button(40,40,"Main/Sprites/Cavalo.png", 2)
 
 resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Bispo.png", 3)
 initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Rainha.png", 3)
@@ -120,7 +120,16 @@ def HandlePecasRelease():
     current_game.EndTurn()
 
 
+def DrawText(text:str, x:int, y:int, color, size:int):
+    global window
 
+    fonte = PG.font.Font(FONTE_PRIN, size)
+
+    text_render = fonte.render(text, True, color)
+
+    text_size = fonte.size(text)
+
+    window.blit(text_render, (x - (text_size[0] // 2), y - (text_size[1] // 2)))
 
 
 def DrawCorRodada():
@@ -131,10 +140,78 @@ def DrawCorRodada():
         return
     
     text = "Preto" if current_game.cor_rodada == 1 else "Branco"
-    
-    text_render = fonte_principal.render(text, True, BLACK)  # Atualiza o texto
+    color = BLACK if current_game.cor_rodada == 1 else WHITE
 
-    window.blit(text_render, (LARGURA/2 - 50, 10))
+    DrawText(text,LARGURA // 2 + 358, ALTURA // 2 -130, color, 55) # Desenhando a cor da rodada
+    
+    DrawText(str(current_game.num_rodadas),LARGURA // 2 + 350, ALTURA // 2, BLACK, 50) # Desenhando o numero da rodada
+
+
+
+
+def DrawCapturePeca(jogo:str):
+    global current_game, window
+
+    if current_game == None:
+        return
+    
+    if (jogo == "damas"):
+
+        # PEÇAS CAPTURADAS BRANCAS
+        image = PG.image.load("Main/Sprites/PECA_BRANCA.png").convert_alpha()
+
+        new_size = int(image.get_width() * 1.5)
+
+        image = PG.transform.scale(image, (new_size, new_size))
+
+        window.blit(image, (LARGURA // 2 - 450, ALTURA // 2 - 210))
+
+        DrawText( f"x{current_game.tabuleiro.num_brancas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 - 175, BLACK, 50)
+
+
+        # PEÇAS CAPTURADAS PRETAS
+        image = PG.image.load("Main/Sprites/PECA_PRETA.png").convert_alpha()
+
+        new_size = int(image.get_width() * 1.5)
+
+        image = PG.transform.scale(image, (new_size, new_size))
+
+        window.blit(image, (LARGURA // 2 - 450, ALTURA // 2 + 110))
+
+        DrawText( f"x{current_game.tabuleiro.num_pretas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 + 140, BLACK, 50)
+    
+    elif (jogo == "xadrez"):
+        
+        index_brancas = 0
+
+        for p in current_game.PecasBrancas:
+
+            if (p.capturada):
+                
+                x = LARGURA // 2 - 350 + (60 * index_brancas)
+
+                y = 50
+
+                window.blit(p.image, (x,y))
+                
+                index_brancas += 1
+
+        index_pretas = 0
+
+        for p in current_game.PecasPretas:
+
+            if (p.capturada):
+                
+                x = LARGURA // 2 - 350 + (60 * index_pretas)
+
+                y = ALTURA // 2 + 250
+
+                window.blit(p.image, (x,y))
+                
+                index_pretas += 1
+
+
+
 
 def DrawWinScreen():
     global current_game,window
@@ -200,6 +277,8 @@ def GameState():
         current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged)
         
         DrawCorRodada()
+        
+        DrawCapturePeca(selected_game)
 
         mouse = PG.mouse.get_pressed()
 
