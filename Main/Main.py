@@ -15,8 +15,19 @@ PG.display.set_caption("Damas")
 
 state = "initialmenu"
 
-start_button = None
-quit_button = None
+start_button = Button(LARGURA//2, ALTURA//2 -50, "Main/Sprites/Torre.png", 4)
+quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
+
+damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/PECA_BRANCA.png", 4)
+xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/PECA_PRETA.png", 4)
+
+pause_button = Button(80,80,"Main/Sprites/Cavalo.png", 2)
+
+resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Bispo.png", 3)
+initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Rainha.png", 3)
+reset_button = Button(LARGURA//2, ALTURA//2 + 120, "Main/Sprites/Rei.png", 3)
+
+selected_game = ""
 
 current_game = None
 
@@ -28,7 +39,12 @@ fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 fonte_win_text = PG.font.Font(FONTE_PRIN, 60)
 
 def CreateGame(jogo:str):
-    global current_game 
+    global current_game
+
+    if (current_game != None):
+        current_game.ResetGame(jogo)
+        return
+
     current_game = Game(jogo)
 
 
@@ -134,31 +150,55 @@ def DrawWinScreen():
 
 
 def GameState():
-    global running, state, window, current_game, peca_being_dragged, start_button, quit_button
+    global running, state, window, current_game, peca_being_dragged, selected_game
+    global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button
 
     if (state == "initialmenu"):
-        if (not start_button):
-            start_button = Button(LARGURA//2, ALTURA//2 -50, "Main/Sprites/Torre.png", 4)
-        
-        if (not quit_button):
-            quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
 
         start_button.DisplayButton(window)
         quit_button.DisplayButton(window)
 
         if (start_button.released):
-            state = "gaming"
+            # CreateGame(selected_game)
+            state = "menuselection"
+            start_button.UpdateClick()
 
         if (quit_button.released):
             running = False
+            quit_button.UpdateClick()
+
+    elif (state == "menuselection"):
+
+        damas_button.DisplayButton(window)
+        xadrez_button.DisplayButton(window)
+
+        if (damas_button.released):
+            selected_game = "damas"
+            CreateGame(selected_game)
+            state = "gaming"
+            damas_button.UpdateClick()
+
+        if (xadrez_button.released):
+            selected_game = "xadrez"
+            CreateGame(selected_game)
+            state = "gaming"
+            xadrez_button.UpdateClick()
+
+
 
     elif (state == "gaming"):
 
         if (current_game == None):
-            CreateGame("xadrez")
+            CreateGame(selected_game)
+
+        pause_button.DisplayButton(window)
+
+        if (pause_button.released):
+            state = "paused"
+            pause_button.UpdateClick()
 
         current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged)
-
+        
         DrawCorRodada()
 
         mouse = PG.mouse.get_pressed()
@@ -168,6 +208,25 @@ def GameState():
         elif peca_being_dragged:
             HandlePecasRelease()
     
+    elif (state == "paused"):
+
+        resume_button.DisplayButton(window)
+        initial_menu_button.DisplayButton(window)
+        reset_button.DisplayButton(window)
+        
+        if (resume_button.released):
+            state = "gaming"
+            resume_button.UpdateClick()
+
+        if (initial_menu_button.released):
+            state = "initialmenu"
+            initial_menu_button.UpdateClick()
+
+        if (reset_button.released):
+            current_game.ResetGame()
+            state = "gaming"
+            reset_button.UpdateClick()
+
     elif (state == "winScreen"):
 
         if (current_game != None):

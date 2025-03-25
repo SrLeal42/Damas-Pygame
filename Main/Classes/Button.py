@@ -10,6 +10,9 @@ class Button(PG.sprite.Sprite):
     image_height = 0
     image_width = 0
 
+    normal_img = None
+    bigger_img = None
+
     clicked = False
     pressed = False
     released = False
@@ -37,6 +40,13 @@ class Button(PG.sprite.Sprite):
 
         self.image_height = self.image.get_height()
         self.image_width = self.image.get_width()
+        
+        self.normal_img = self.image
+
+        new_size = int(self.image_height *  1.1)
+
+        self.bigger_img = PG.transform.scale(self.image, (new_size, new_size))
+
 
     def Draw(self, window):
         grupo_sprite = PG.sprite.Group(self)
@@ -55,15 +65,13 @@ class Button(PG.sprite.Sprite):
             self.pressed = PG.mouse.get_pressed()[0] == 1
 
     def ButtonHover(self):
+        if (not self.normal_img or not self.bigger_img):
+            return
+        
         mouse_pos = PG.mouse.get_pos()
+        # É preciso fazer deste jeito se não o escalonamento vai degradando a sprite
+        self.image = self.bigger_img if self.rect.collidepoint(mouse_pos) else self.normal_img
 
-        scale = 1.1 if self.rect.collidepoint(mouse_pos) else 1
-
-        new_size = int(self.image_height *  scale)
-    
-        self.image = PG.transform.scale(self.image, (new_size, new_size))
-
-        # rect té um atributo da classe Sprite
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
 

@@ -25,6 +25,19 @@ class Tabuleiro:
             
             self.tabuleiro.append(coluna)
 
+    def ResetTabuleiro(self):
+        
+        self.tabuleiro = []
+
+        for i in range(self.tamanho):
+            
+            coluna = []
+            
+            for j in range(self.tamanho):
+                coluna.append(None)
+            
+            self.tabuleiro.append(coluna)
+
 
     def AdicionaPecasAoTabuleiro(self,Pecas,jogo:str,cor:int):
 

@@ -115,4 +115,41 @@ class Game:
         return response
 
     
+    def ResetGame(self, jogo:str = None):
+        
+        self.jogo = jogo if jogo else self.jogo
+
+        self.gameEnd = False
+
+        self.colorWinner = -1
+
+        self.PecasBrancas = None
+        self.PecasPretas = None
+
+        self.rei_PB = None
+        self.rei_PP = None
+
+        self.num_rodadas = 0
+        self.cor_rodada = 0
+
+        self.sequencia_captura = False
+
+        PB = self.CreatePecas(0)
+        PP = self.CreatePecas(1)
+
+        self.PecasBrancas = PB
+        self.PecasPretas = PP
+
+        self.tabuleiro.ResetTabuleiro()
+
+
+        # for i in range(self.tabuleiro.tamanho):
+        #         for j in range(self.tabuleiro.tamanho):
+        #             if (self.tabuleiro.tabuleiro[i][j] != None):
+        #                 print(self.tabuleiro.tabuleiro[i][j])
+        #             else:
+        #                 print(None)
+
+        self.tabuleiro.AdicionaPecasAoTabuleiro(PB,self.jogo,1)
+        self.tabuleiro.AdicionaPecasAoTabuleiro(PP,self.jogo,0)
 
