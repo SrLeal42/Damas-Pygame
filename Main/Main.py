@@ -3,6 +3,7 @@ from Config import LARGURA, ALTURA,GRAY,BLACK,FONTE_PRIN
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
+from Classes.Button import Button
 
 
 PG.init()
@@ -12,7 +13,10 @@ running = True
 window = PG.display.set_mode((LARGURA,ALTURA))
 PG.display.set_caption("Damas")
 
-state = "gaming"
+state = "initialmenu"
+
+start_button = None
+quit_button = None
 
 current_game = None
 
@@ -129,16 +133,26 @@ def DrawWinScreen():
     window.blit(text_render, (LARGURA/2 - 230, ALTURA/2 - 60))
 
 
+def GameState():
+    global running, state, window, current_game, peca_being_dragged, start_button, quit_button
 
+    if (state == "initialmenu"):
+        if (not start_button):
+            start_button = Button(LARGURA//2, ALTURA//2 -50, "Main/Sprites/Torre.png", 4)
+        
+        if (not quit_button):
+            quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
 
+        start_button.DisplayButton(window)
+        quit_button.DisplayButton(window)
 
-while(running):
+        if (start_button.released):
+            state = "gaming"
 
-    window.fill(GRAY)
+        if (quit_button.released):
+            running = False
 
-
-
-    if (state == "gaming"):
+    elif (state == "gaming"):
 
         if (current_game == None):
             CreateGame("xadrez")
@@ -164,6 +178,13 @@ while(running):
 
 
 
+
+
+while(running):
+
+    window.fill(GRAY)
+
+    GameState()
 
     for evento in PG.event.get():
         if evento.type == PG.QUIT:
