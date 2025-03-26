@@ -641,6 +641,9 @@ class Tabuleiro:
                 
                 for i in range(1,self.tamanho):
 
+                    if (mandatory_move and i > 1):
+                        break
+
                     linha = peca.start_linha + (i * 1) * orientacao_linha
                     coluna = peca.start_coluna + (i * 1) * orientacao_coluna
 
@@ -666,8 +669,6 @@ class Tabuleiro:
                     if (next_content == None):
                         return True
                     
-                    if (mandatory_move):
-                        break
         
         return False
 
