@@ -406,8 +406,14 @@ class Tabuleiro:
                 # content.CapturarPeca(self)
 
         elif (peca.tipo == 4):
+            
+            if ((dif_coluna_abs > 2 or dif_linha_abs > 2) or (dif_linha_abs == 0 or dif_coluna_abs == 0)):
+                return {"canMove": False, "mensage":"Movimento invalido"}
 
-            if (dif_linha_abs != 2 or dif_coluna_abs != 1):
+            if (dif_linha_abs == 2 and dif_coluna_abs != 1):
+                return {"canMove": False, "mensage":"Movimento invalido"}
+            
+            if (dif_linha_abs == 1 and dif_coluna_abs != 2):
                 return {"canMove": False, "mensage":"Movimento invalido"}
 
             if (content != None):
