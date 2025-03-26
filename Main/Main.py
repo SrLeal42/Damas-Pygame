@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN
+from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -125,7 +125,7 @@ def DrawText(text:str, x:int, y:int, color, size:int):
 
     fonte = PG.font.Font(FONTE_PRIN, size)
 
-    text_render = fonte.render(text, True, color)
+    text_render = fonte.render(text, False, color)
 
     text_size = fonte.size(text)
 
@@ -142,9 +142,9 @@ def DrawCorRodada():
     text = "Preto" if current_game.cor_rodada == 1 else "Branco"
     color = BLACK if current_game.cor_rodada == 1 else WHITE
 
-    DrawText(text,LARGURA // 2 + 358, ALTURA // 2 -130, color, 55) # Desenhando a cor da rodada
+    DrawText(text,LARGURA // 2 + 358, ALTURA // 2 -130, color, 40) # Desenhando a cor da rodada
     
-    DrawText(str(current_game.num_rodadas),LARGURA // 2 + 350, ALTURA // 2, BLACK, 50) # Desenhando o numero da rodada
+    DrawText(str(current_game.num_rodadas),LARGURA // 2 + 350, ALTURA // 2, BLACK, 40) # Desenhando o numero da rodada
 
 
 
@@ -158,7 +158,7 @@ def DrawCapturePeca(jogo:str):
     if (jogo == "damas"):
 
         # PEÇAS CAPTURADAS BRANCAS
-        image = PG.image.load("Main/Sprites/PECA_BRANCA.png").convert_alpha()
+        image = PG.image.load(PATH_SPRITE_PECA_BRANCA).convert_alpha()
 
         new_size = int(image.get_width() * 1.5)
 
@@ -166,11 +166,11 @@ def DrawCapturePeca(jogo:str):
 
         window.blit(image, (LARGURA // 2 - 450, ALTURA // 2 - 210))
 
-        DrawText( f"x{current_game.tabuleiro.num_brancas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 - 175, BLACK, 50)
+        DrawText( f"x{current_game.tabuleiro.num_brancas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 - 175, BLACK, 30)
 
 
         # PEÇAS CAPTURADAS PRETAS
-        image = PG.image.load("Main/Sprites/PECA_PRETA.png").convert_alpha()
+        image = PG.image.load(PATH_SPRITE_PECA_PRETA).convert_alpha()
 
         new_size = int(image.get_width() * 1.5)
 
@@ -178,7 +178,7 @@ def DrawCapturePeca(jogo:str):
 
         window.blit(image, (LARGURA // 2 - 450, ALTURA // 2 + 110))
 
-        DrawText( f"x{current_game.tabuleiro.num_pretas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 + 140, BLACK, 50)
+        DrawText( f"x{current_game.tabuleiro.num_pretas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 + 140, BLACK, 35)
     
     elif (jogo == "xadrez"):
         
@@ -188,7 +188,7 @@ def DrawCapturePeca(jogo:str):
 
             if (p.capturada):
                 
-                x = LARGURA // 2 - 350 + (60 * index_brancas)
+                x = LARGURA // 2 - 350 + (45 * index_brancas)
 
                 y = 50
 
@@ -202,7 +202,7 @@ def DrawCapturePeca(jogo:str):
 
             if (p.capturada):
                 
-                x = LARGURA // 2 - 350 + (60 * index_pretas)
+                x = LARGURA // 2 - 350 + (45 * index_pretas)
 
                 y = ALTURA // 2 + 250
 

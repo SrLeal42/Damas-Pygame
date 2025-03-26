@@ -15,13 +15,14 @@ class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
     start_x = 0
     start_y = 0
     # tamanho = 20
-    escala = 1.5
+    escala = 3
     capturada = False
     sendo_arrastada = False
     primeiro_movimento = True
 
-    def __init__(self,cor:int,linha:int,coluna:int,x=0,y=0,tipo=0):
+    def __init__(self,cor:int,linha:int,coluna:int, escala:float ,x=0,y=0,tipo=0):
         self.cor = cor
+        self.escala = escala
         # Inicializa a classe Sprite
         super().__init__()
         self.linha = linha

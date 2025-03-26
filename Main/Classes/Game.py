@@ -53,7 +53,7 @@ class Game:
             
             for _ in range(NUM_PECAS_DAMAS):
 
-                p = Peca(cor,0,0)
+                p = Peca(cor,0,0, escala=1.5)
                 P.append(p)
         
         elif (self.jogo == "xadrez"):
@@ -61,7 +61,7 @@ class Game:
             outros_tipos = [3] * 2 + [4] * 2 + [5] * 2 + [6, 7]
 
             for i, tipo in enumerate(outros_tipos):
-                p = Peca(cor, 0, 0, tipo=tipo)
+                p = Peca(cor, 0, 0, tipo=tipo,  escala=3)
 
                 if tipo == 7:  # O rei
                     if cor == 0:
@@ -72,7 +72,7 @@ class Game:
                 P.append(p)
 
             for i in range(NUM_PECAS_XADREZ//2):
-                p = Peca(cor, 0, 0, tipo=2)
+                p = Peca(cor, 0, 0, tipo=2, escala=3)
 
                 if (cor == 0):
                     P.insert(0,p)
