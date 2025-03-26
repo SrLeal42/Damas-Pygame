@@ -37,8 +37,6 @@ peca_mandatory_move = []
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 
-fonte_win_text = PG.font.Font(FONTE_PRIN, 60)
-
 def CreateGame(jogo:str):
     global current_game, peca_being_dragged, last_peca_moved, peca_mandatory_move
 
@@ -124,8 +122,6 @@ def HandlePecasRelease():
         current_game.sequencia_captura = canCapture
         # print(canCapture)
 
-    if (current_game != None and current_game.jogo == "damas"):
-        peca_mandatory_move = current_game.SomePecaCanCapture()
 
     winnigResponse = current_game.WinningUpdate()
 
@@ -134,6 +130,10 @@ def HandlePecasRelease():
         print(winnigResponse)
 
     current_game.EndTurn()
+
+    if (current_game != None and current_game.jogo == "damas"):
+        peca_mandatory_move = current_game.SomePecaCanCapture()
+
 
 
 def DrawText(text:str, x:int, y:int, color, size:int):
@@ -237,9 +237,7 @@ def DrawWinScreen():
     
     text = "As Pretas ganharam" if current_game.colorWinner == 1 else "As Brancas ganharam"
     
-    text_render = fonte_win_text.render(text, True, BLACK)  # Atualiza o texto
-
-    window.blit(text_render, (LARGURA/2 - 230, ALTURA/2 - 60))
+    DrawText(text, LARGURA//2,ALTURA//2,BLACK,50)
 
 
 def GameState():

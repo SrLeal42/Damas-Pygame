@@ -340,6 +340,12 @@ class Tabuleiro:
                 # _content.CapturarPeca(self)
 
 
+            canCapture = self.VerifyPecaCanCapture(peca, True)
+            
+            if (canCapture and alguma_peca_capturada == None):
+                return {"canMove": False, "mensage":"Voce deve capturar a peça adjacente"}
+
+
             # Peça Peão
         elif (peca.tipo == 2):
             
@@ -580,7 +586,7 @@ class Tabuleiro:
         # print(response)
         return response
     
-    def VerifyPecaCanCapture(self, peca:Peca):
+    def VerifyPecaCanCapture(self, peca:Peca, mandatory_move:bool = False):
 
         orientacao_peca = -1 if peca.cor == 0 else 1
 
@@ -656,6 +662,9 @@ class Tabuleiro:
 
                     if (next_content == None):
                         return True
+                    
+                    if (mandatory_move):
+                        break
         
         return False
 

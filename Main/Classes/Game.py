@@ -166,8 +166,9 @@ class Game:
                 if (p == None):
                     continue
 
-                if (self.tabuleiro.VerifyPecaCanCapture(p)):
-                    peca.append(p)
+                if (self.tabuleiro.VerifyPecaCanCapture(p, True)):
+                    if (p.cor == self.cor_rodada):
+                        peca.append(p)
                 
         
         return peca
