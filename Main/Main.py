@@ -328,7 +328,7 @@ def GameState():
             state = "paused"
             pause_button.UpdateClick()
 
-        current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged)
+        current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged,peca_mandatory_move)
         
         DrawCorRodada()
         

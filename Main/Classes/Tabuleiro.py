@@ -140,7 +140,7 @@ class Tabuleiro:
             
 
 
-    def DesenhaTabuleiro(self, window, p_being_dragged:Peca = None):
+    def DesenhaTabuleiro(self, window, p_being_dragged:Peca = None, peca_mandatory_move:Peca = []):
         
         # PG.draw.line(window, 
         #              WHITE, 
@@ -158,7 +158,7 @@ class Tabuleiro:
         for i in range(self.tamanho):
             for j in range(self.tamanho):
 
-                # peca = self.tabuleiro[i][j]
+                peca = self.tabuleiro[i][j]
                 
                 x = LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j))
                 y = ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))
@@ -181,6 +181,9 @@ class Tabuleiro:
                     
                     PG.draw.rect(window,GOLDEN_WHITE,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
 
+                elif (peca != None and peca in peca_mandatory_move):
+
+                    PG.draw.rect(window,GOLDEN_BLACK,(x-quad_tam/2,y-quad_tam/2,quad_tam,quad_tam))
 
                     # PG.draw.circle(window,BLACK,(LARGURA/2 + (-self.x_OffSet + (self.x_OffSet/4 * j)),ALTURA/2 + (-self.y_OffSet + (self.y_OffSet/4 * i))),2)
 
