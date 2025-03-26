@@ -153,3 +153,21 @@ class Game:
         self.tabuleiro.AdicionaPecasAoTabuleiro(PB,self.jogo,1)
         self.tabuleiro.AdicionaPecasAoTabuleiro(PP,self.jogo,0)
 
+
+    def SomePecaCanCapture(self):
+        
+        peca = []
+
+        for linha in range(self.tabuleiro.tamanho):
+            for coluna in range(self.tabuleiro.tamanho):
+
+                p = self.tabuleiro.tabuleiro[linha][coluna]
+
+                if (p == None):
+                    continue
+
+                if (self.tabuleiro.VerifyPecaCanCapture(p)):
+                    peca.append(p)
+                
+        
+        return peca

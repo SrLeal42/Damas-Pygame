@@ -33,16 +33,25 @@ current_game = None
 
 peca_being_dragged = None
 last_peca_moved = None
+peca_mandatory_move = []
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
 
 fonte_win_text = PG.font.Font(FONTE_PRIN, 60)
 
 def CreateGame(jogo:str):
-    global current_game
+    global current_game, peca_being_dragged, last_peca_moved, peca_mandatory_move
 
     if (current_game != None):
+        
         current_game.ResetGame(jogo)
+        
+        peca_being_dragged = None
+        
+        last_peca_moved = None
+        
+        peca_mandatory_move = []
+
         return
 
     current_game = Game(jogo)
@@ -80,6 +89,10 @@ def HandlePecasClick():
 
                 if (current_game.sequencia_captura and p != last_peca_moved):# Caso o player esteja em uma sequencia de captura e ele deve mover a apenas a ultima peça que ele moveu  
                     break
+                
+                if (len(peca_mandatory_move) != 0):
+                    if (p not in peca_mandatory_move):
+                        break
 
                 peca_being_dragged = p
                 p.SetCoord(mouse_pos[0],mouse_pos[1])
@@ -91,7 +104,7 @@ def HandlePecasClick():
 
 
 def HandlePecasRelease():
-    global peca_being_dragged, current_game, last_peca_moved, state
+    global peca_being_dragged, current_game, last_peca_moved, state, peca_mandatory_move
 
     if peca_being_dragged == None:
         return
@@ -110,6 +123,9 @@ def HandlePecasRelease():
         
         current_game.sequencia_captura = canCapture
         # print(canCapture)
+
+    if (current_game != None and current_game.jogo == "damas"):
+        peca_mandatory_move = current_game.SomePecaCanCapture()
 
     winnigResponse = current_game.WinningUpdate()
 
@@ -302,7 +318,7 @@ def GameState():
             initial_menu_button.UpdateClick()
 
         if (reset_button.released):
-            current_game.ResetGame()
+            CreateGame(selected_game)
             state = "gaming"
             reset_button.UpdateClick()
 

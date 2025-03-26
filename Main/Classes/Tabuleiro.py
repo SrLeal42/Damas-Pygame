@@ -300,6 +300,13 @@ class Tabuleiro:
                 else:
                     alguma_peca_capturada = peca_between
                     # peca_between.CapturarPeca(self)
+            else: 
+
+                canCapture = self.VerifyPecaCanCapture(peca)
+                
+                if (canCapture):
+                    return {"canMove": False, "mensage":"Voce deve capturar a peça adjacente"}
+
 
             # Peça Damas
         elif (peca.tipo == 1):
