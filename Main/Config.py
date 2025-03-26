@@ -13,6 +13,8 @@ GOLDEN_WHITE = (174,176,106)
 
 FONTE_PRIN = "Main/Fontes/joystix_monospace.otf"
 
+PATH_TRANSICAO = "Main/Sprites/transicao.png"
+
 PATH_SPRITE_PECA_BRANCA = "Main/Sprites/Damas/peca-branco.png"
 PATH_SPRITE_PECA_PRETA = "Main/Sprites/Damas/peca-preto.png"
 

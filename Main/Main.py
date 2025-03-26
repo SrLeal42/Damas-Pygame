@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA
+from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -18,8 +18,8 @@ state = "initialmenu"
 start_button = Button(LARGURA//2, ALTURA//2 -50, "Main/Sprites/Torre.png", 4)
 quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
 
-damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/PECA_BRANCA.png", 4)
-xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/PECA_PRETA.png", 4)
+damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
+xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
 
 pause_button = Button(40,40,"Main/Sprites/Cavalo.png", 2)
 
@@ -36,6 +36,10 @@ last_peca_moved = None
 peca_mandatory_move = []
 
 fonte_principal = PG.font.Font(FONTE_PRIN, 40)
+
+def Lerp(a, b, t):
+    return a + (b - a) * t
+
 
 def CreateGame(jogo:str):
     global current_game, peca_being_dragged, last_peca_moved, peca_mandatory_move
@@ -194,7 +198,7 @@ def DrawCapturePeca(jogo:str):
 
         window.blit(image, (LARGURA // 2 - 450, ALTURA // 2 + 110))
 
-        DrawText( f"x{current_game.tabuleiro.num_pretas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 + 140, BLACK, 35)
+        DrawText( f"x{current_game.tabuleiro.num_pretas_capturadas}", LARGURA // 2 - 373, ALTURA // 2 + 140, BLACK, 30)
     
     elif (jogo == "xadrez"):
         
@@ -240,6 +244,38 @@ def DrawWinScreen():
     DrawText(text, LARGURA//2,ALTURA//2,BLACK,50)
 
 
+def Transition(next_state:str):
+    global window, state
+    
+    image = PG.image.load(PATH_TRANSICAO).convert_alpha()
+
+    timer = 0
+    duration = 1
+
+    margin_error = 0.05
+
+    while(timer < duration):
+        t = timer / duration
+
+        x = Lerp(image.get_width()-200, -image.get_width(), t)
+        
+        window.fill(GRAY)
+
+        if (t <= 0.5 + margin_error and t >= 0.5 - margin_error):
+            state = next_state
+
+        GameState()
+
+        window.blit(image, (x, 0))
+        
+        PG.display.update()
+
+        timer += 0.01
+
+        PG.time.delay(10)
+
+
+
 def GameState():
     global running, state, window, current_game, peca_being_dragged, selected_game
     global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button
@@ -250,13 +286,15 @@ def GameState():
         quit_button.DisplayButton(window)
 
         if (start_button.released):
-            # CreateGame(selected_game)
-            state = "menuselection"
+            Transition("menuselection")
+            # state = "menuselection"
             start_button.UpdateClick()
+            
 
         if (quit_button.released):
             running = False
             quit_button.UpdateClick()
+            
 
     elif (state == "menuselection"):
 
@@ -266,13 +304,15 @@ def GameState():
         if (damas_button.released):
             selected_game = "damas"
             CreateGame(selected_game)
-            state = "gaming"
+            Transition("gaming")
+            # state = "gaming"
             damas_button.UpdateClick()
 
         if (xadrez_button.released):
             selected_game = "xadrez"
             CreateGame(selected_game)
-            state = "gaming"
+            Transition("gaming")
+            # state = "gaming"
             xadrez_button.UpdateClick()
 
 
@@ -312,12 +352,14 @@ def GameState():
             resume_button.UpdateClick()
 
         if (initial_menu_button.released):
-            state = "initialmenu"
+            Transition("initialmenu")
+            # state = "initialmenu"
             initial_menu_button.UpdateClick()
 
         if (reset_button.released):
             CreateGame(selected_game)
-            state = "gaming"
+            Transition("gaming")
+            # state = "gaming"
             reset_button.UpdateClick()
 
     elif (state == "winScreen"):
@@ -327,7 +369,6 @@ def GameState():
             DrawCorRodada()
 
         DrawWinScreen()
-
 
 
 
