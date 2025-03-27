@@ -31,9 +31,10 @@ class Button(PG.sprite.Sprite):
         # image é um atributo da classe Sprite 
         self.image = PG.image.load(path).convert_alpha()
 
-        new_size = int(self.image.get_width() * scale)
+        x_size = int(self.image.get_width() * scale)
+        y_size = int(self.image.get_height() * scale)
         
-        self.image = PG.transform.scale(self.image, (new_size, new_size))
+        self.image = PG.transform.scale(self.image, (x_size, y_size))
 
         # rect té um atributo da classe Sprite
         self.rect = self.image.get_rect(center=(self.x, self.y))
@@ -43,9 +44,10 @@ class Button(PG.sprite.Sprite):
         
         self.normal_img = self.image
 
-        new_size = int(self.image_height *  1.1)
+        x_size = int(self.image_width *  1.1)
+        y_size = int(self.image_height *  1.1)
 
-        self.bigger_img = PG.transform.scale(self.image, (new_size, new_size))
+        self.bigger_img = PG.transform.scale(self.image, (x_size, y_size))
 
 
     def Draw(self, window):

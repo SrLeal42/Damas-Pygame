@@ -15,17 +15,17 @@ PG.display.set_caption("Damas")
 
 state = "initialmenu"
 
-start_button = Button(LARGURA//2, ALTURA//2 -50, "Main/Sprites/Torre.png", 4)
-quit_button = Button(LARGURA//2, ALTURA//2 + 100, "Main/Sprites/Peao.png", 4)
+start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
+quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
 
 damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
 xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
 
-pause_button = Button(40,40,"Main/Sprites/Cavalo.png", 2)
+pause_button = Button(40,40,"Main/Sprites/Buttons/pause-button.png", 2)
 
-resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Bispo.png", 3)
-initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Rainha.png", 3)
-reset_button = Button(LARGURA//2, ALTURA//2 + 120, "Main/Sprites/Rei.png", 3)
+resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Buttons/resume-button.png", 3)
+initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Buttons/menu-button.png", 3)
+reset_button = Button(LARGURA//2, ALTURA//2 + 120, "Main/Sprites/Buttons/reset-button.png", 3)
 
 selected_game = ""
 
@@ -159,12 +159,21 @@ def DrawCorRodada():
     if current_game == None:
         return
     
-    text = "Preto" if current_game.cor_rodada == 1 else "Branco"
-    color = BLACK if current_game.cor_rodada == 1 else WHITE
+    painel = PG.image.load("Main/Sprites/painel.png").convert_alpha()
 
-    DrawText(text,LARGURA // 2 + 358, ALTURA // 2 -130, color, 40) # Desenhando a cor da rodada
+    x_size = int(painel.get_width() * 8)
+    y_size = int(painel.get_height() * 8)
+
+    painel = PG.transform.scale(painel, (x_size, y_size))
+
+    window.blit(painel, (LARGURA // 2 + 230, ALTURA // 2 - 285))
+
+    text = "Preto" if current_game.cor_rodada == 1 else "Branco"
+    # color = BLACK if current_game.cor_rodada == 1 else WHITE
+
+    DrawText(text,LARGURA // 2 + 358, ALTURA // 2 -130, WHITE, 35) # Desenhando a cor da rodada
     
-    DrawText(str(current_game.num_rodadas),LARGURA // 2 + 350, ALTURA // 2, BLACK, 40) # Desenhando o numero da rodada
+    DrawText(str(current_game.num_rodadas),LARGURA // 2 + 350, ALTURA // 2, WHITE, 40) # Desenhando o numero da rodada
 
 
 
