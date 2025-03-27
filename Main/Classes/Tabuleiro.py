@@ -577,7 +577,7 @@ class Tabuleiro:
                 self.tabuleiro[roque["linha_torre_final"]][roque["coluna_torre_final"]] = torre
 
                 torre.SetCoord(coord[0],coord[1],True)
-                torre.SetTabCoord(roque["linha_torre_final"],roque["coluna_torre_final"])
+                torre.SetTabCoord(roque["linha_torre_final"],roque["coluna_torre_final"], True)
             
             elif (turn):
                 peca.TurnPecaInToRainha()
