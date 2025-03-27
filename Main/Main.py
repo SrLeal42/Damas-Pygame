@@ -4,9 +4,12 @@ from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
 from Classes.Button import Button
-
+from Classes.SoundFXManager import SoundFXManager
 
 PG.init()
+PG.mixer.init()
+
+SoundManager = SoundFXManager()
 
 running = True
 
@@ -110,7 +113,7 @@ def HandlePecasClick():
 
 
 def HandlePecasRelease():
-    global peca_being_dragged, current_game, last_peca_moved, state, peca_mandatory_move
+    global peca_being_dragged, current_game, last_peca_moved, state, peca_mandatory_move, SoundManager
 
     if peca_being_dragged == None:
         return
@@ -123,6 +126,8 @@ def HandlePecasRelease():
 
     if (not response["canMove"]):
         return
+
+    SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
 
     if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
         canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
@@ -421,7 +426,7 @@ def GameState():
             reset_button.UpdateClick()
 
 
-
+SoundManager.StartPlayMusic(0.3)
 
 while(running):
 

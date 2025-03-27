@@ -1,5 +1,5 @@
 import pygame as PG
-
+from Classes.SoundFXManager import SoundFXManager
 
 
 class Button(PG.sprite.Sprite):
@@ -16,6 +16,9 @@ class Button(PG.sprite.Sprite):
     clicked = False
     pressed = False
     released = False
+
+    SoundManager = SoundFXManager()
+    played_hover_SFX = False
 
     def __init__(self, x:int, y:int, pathImage:str, scale:float):
         super().__init__()
@@ -66,13 +69,31 @@ class Button(PG.sprite.Sprite):
 
             self.pressed = PG.mouse.get_pressed()[0] == 1
 
+            if (self.released):
+                self.SoundManager.PlaySoundFX("Main/Sounds/SoundFX/Select_1.wav", 0.3)
+
     def ButtonHover(self):
         if (not self.normal_img or not self.bigger_img):
             return
         
         mouse_pos = PG.mouse.get_pos()
+
+        colidiu = self.rect.collidepoint(mouse_pos)
+
         # É preciso fazer deste jeito se não o escalonamento vai degradando a sprite
-        self.image = self.bigger_img if self.rect.collidepoint(mouse_pos) else self.normal_img
+        self.image = self.bigger_img if colidiu else self.normal_img
+
+        if (colidiu and not self.played_hover_SFX):
+
+            self.SoundManager.PlaySoundFX("Main/Sounds/SoundFX/Cancel_1.wav", 0.3)
+            
+            self.played_hover_SFX = True
+
+        elif (not colidiu):
+
+            self.played_hover_SFX = False
+
+
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
