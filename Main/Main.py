@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,WHITE,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO
+from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -26,6 +26,10 @@ pause_button = Button(40,40,"Main/Sprites/Buttons/pause-button.png", 2)
 resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Buttons/resume-button.png", 3)
 initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Buttons/menu-button.png", 3)
 reset_button = Button(LARGURA//2, ALTURA//2 + 120, "Main/Sprites/Buttons/reset-button.png", 3)
+
+win_initial_menu_button = Button(LARGURA//2 - 115, ALTURA//2 + 180, "Main/Sprites/Buttons/menu-button.png", 3)
+win_reset_button = Button(LARGURA//2 + 115, ALTURA//2 + 180, "Main/Sprites/Buttons/reset-button.png", 3)
+
 
 selected_game = ""
 
@@ -248,9 +252,32 @@ def DrawWinScreen():
     if current_game == None:
         return
     
-    text = "As Pretas ganharam" if current_game.colorWinner == 1 else "As Brancas ganharam"
+    # Retangulo transparente preto de fundo
+    rect_surf = PG.Surface((LARGURA, ALTURA),PG.SRCALPHA)
+    rect_surf.fill(BLACK50)
     
-    DrawText(text, LARGURA//2,ALTURA//2,BLACK,50)
+    window.blit(rect_surf,(0,0))
+
+    # Painel com as informações e botões
+    painel = PG.image.load("Main/Sprites/painel_64.png").convert_alpha()
+
+    x_size = int(painel.get_width() * 9)
+    y_size = int(painel.get_height() * 9)
+
+    painel = PG.transform.scale(painel, (x_size, y_size))
+
+    window.blit(painel, (LARGURA // 2 - (painel.get_width() // 2), ALTURA // 2 - (painel.get_height() // 2 )))
+
+    DrawText("COR VENCEDORA", LARGURA//2,ALTURA//2 - 200, WHITE, 30)
+
+    text = "PRETA" if current_game.colorWinner == 1 else "BRANCA"
+    
+    DrawText(text, LARGURA//2,ALTURA//2 - 115, WHITE, 55)
+
+    DrawText("RODADAS", LARGURA//2,ALTURA//2 - 20, WHITE, 30)
+
+    DrawText(str(current_game.num_rodadas), LARGURA//2,ALTURA//2 + 50, WHITE, 55)
+
 
 
 def Transition(next_state:str):
@@ -377,7 +404,21 @@ def GameState():
             current_game.tabuleiro.DesenhaTabuleiro(window)
             DrawCorRodada()
 
+        pause_button.Draw(window)
+
         DrawWinScreen()
+
+        win_initial_menu_button.DisplayButton(window)
+        win_reset_button.DisplayButton(window)
+
+        if (win_initial_menu_button.released):
+            Transition("initialmenu")
+            initial_menu_button.UpdateClick()
+
+        if (win_reset_button.released):
+            CreateGame(selected_game)
+            Transition("gaming")
+            reset_button.UpdateClick()
 
 
 
