@@ -11,7 +11,7 @@ PG.init()
 PG.mixer.init()
 
 SoundManager = SoundFXManager()
-volume_music = 0 # 0.3
+volume_music = 0.3
 
 running = True
 
