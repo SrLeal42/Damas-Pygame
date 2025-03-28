@@ -4,12 +4,14 @@ from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
 from Classes.Button import Button
+from Classes.WaveText import WaveText
 from Classes.SoundFXManager import SoundFXManager
 
 PG.init()
 PG.mixer.init()
 
 SoundManager = SoundFXManager()
+volume_music = 0 # 0.3
 
 running = True
 
@@ -17,6 +19,9 @@ window = PG.display.set_mode((LARGURA,ALTURA))
 PG.display.set_caption("Damas")
 
 state = "initialmenu"
+
+damas_text = WaveText("DAMAS", LARGURA//2, 150, WHITE, 75, 20, 2)
+paused_text = WaveText("PAUSADO", LARGURA//2, 100, WHITE, 50, 20, 2)
 
 start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
 quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
@@ -321,8 +326,11 @@ def Transition(next_state:str):
 def GameState():
     global running, state, window, current_game, peca_being_dragged, selected_game
     global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button
+    global damas_text
 
     if (state == "initialmenu"):
+        
+        damas_text.Wave(window)
 
         start_button.DisplayButton(window)
         quit_button.DisplayButton(window)
@@ -384,6 +392,8 @@ def GameState():
             HandlePecasRelease()
     
     elif (state == "paused"):
+        
+        paused_text.Wave(window)
 
         resume_button.DisplayButton(window)
         initial_menu_button.DisplayButton(window)
@@ -420,16 +430,16 @@ def GameState():
         if (win_initial_menu_button.released):
             Transition("initialmenu")
             initial_menu_button.UpdateClick()
-            SoundManager.StartPlayMusic(0.3)
+            SoundManager.StartPlayMusic(volume_music)
 
         if (win_reset_button.released):
             CreateGame(selected_game)
             Transition("gaming")
             reset_button.UpdateClick()
-            SoundManager.StartPlayMusic(0.3)
+            SoundManager.StartPlayMusic(volume_music)
 
 
-SoundManager.StartPlayMusic(0.3)
+SoundManager.StartPlayMusic(volume_music)
 
 while(running):
 
