@@ -140,7 +140,8 @@ def HandlePecasRelease():
 
     if (winnigResponse["gameEnd"]):
         state = "winScreen"
-        print(winnigResponse)
+        SoundManager.StartPlayerVictoryMusic(0.4)
+        # print(winnigResponse)
 
     current_game.EndTurn()
 
@@ -419,11 +420,13 @@ def GameState():
         if (win_initial_menu_button.released):
             Transition("initialmenu")
             initial_menu_button.UpdateClick()
+            SoundManager.StartPlayMusic(0.3)
 
         if (win_reset_button.released):
             CreateGame(selected_game)
             Transition("gaming")
             reset_button.UpdateClick()
+            SoundManager.StartPlayMusic(0.3)
 
 
 SoundManager.StartPlayMusic(0.3)
