@@ -22,6 +22,7 @@ state = "initialmenu"
 
 damas_text = WaveText("DAMAS", LARGURA//2, 150, WHITE, 75, 20, 2)
 paused_text = WaveText("PAUSADO", LARGURA//2, 100, WHITE, 50, 20, 2)
+select_text = WaveText("SELECIONE:", LARGURA//2, 100, WHITE, 50, 20, 2)
 
 start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
 quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
@@ -347,6 +348,8 @@ def GameState():
             
 
     elif (state == "menuselection"):
+
+        select_text.Wave(window)
 
         damas_button.DisplayButton(window)
         xadrez_button.DisplayButton(window)

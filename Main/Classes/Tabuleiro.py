@@ -508,8 +508,8 @@ class Tabuleiro:
                 if (_content != None):
                     return {"canMove": False, "mensage":"Movimento invalido"}
                 
-                _coluna_afrente = coluna + 1 * orientacao_coluna
-                
+                _coluna_afrente = peca.start_coluna + 1 * orientacao_coluna
+
                 _content = self.tabuleiro[linha][_coluna_afrente]
                 
                 if (_content == None or _content.tipo != 3):
