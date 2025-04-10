@@ -136,7 +136,7 @@ def HandlePecasRelease():
     SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
 
     if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
-        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
+        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved, True)
         
         current_game.sequencia_captura = canCapture
         # print(canCapture)
