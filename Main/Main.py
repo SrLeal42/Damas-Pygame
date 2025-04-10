@@ -140,6 +140,9 @@ def HandlePecasRelease():
         
         current_game.sequencia_captura = canCapture
         # print(canCapture)
+    elif (response["turnThisRound"]):
+        # Se ele estava em uma sequencia de captura e se tornou dama então sai da sequencia de captura
+        current_game.sequencia_captura = False
 
 
     winnigResponse = current_game.WinningUpdate()
