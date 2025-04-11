@@ -27,6 +27,8 @@ class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
         super().__init__()
         self.linha = linha
         self.coluna = coluna
+        self.start_linha = linha
+        self.start_coluna = coluna
         self.x = x
         self.y = y
         self.start_x = x

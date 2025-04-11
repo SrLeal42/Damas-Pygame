@@ -1,11 +1,12 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO
+from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO, DEPTH
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
 from Classes.Button import Button
 from Classes.WaveText import WaveText
 from Classes.SoundFXManager import SoundFXManager
+from Classes.minimax.algoritmo import minimax
 
 PG.init()
 PG.mixer.init()
@@ -123,7 +124,8 @@ def HandlePecasRelease():
 
     if peca_being_dragged == None:
         return
-
+    print(peca_being_dragged.linha, peca_being_dragged.coluna)
+    print(peca_being_dragged.start_linha, peca_being_dragged.start_coluna)
     response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged,current_game)
     last_peca_moved = peca_being_dragged
 
@@ -131,12 +133,13 @@ def HandlePecasRelease():
     peca_being_dragged = None
 
     if (not response["canMove"]):
+        print(response)
         return
 
     SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
 
     if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
-        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved, True)
+        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
         
         current_game.sequencia_captura = canCapture
         # print(canCapture)
@@ -392,6 +395,13 @@ def GameState():
 
         mouse = PG.mouse.get_pressed()
 
+        if (current_game.cor_rodada == 1):
+            value, move, peca = minimax(current_game.tabuleiro, DEPTH, True, current_game)
+            print(value, move, peca)
+            # current_game.tabuleiro.TryChangePecaPlace(peca, current_game, move[0], move[1])
+            current_game.EndTurn()
+            PG.time.delay(1000)
+
         if mouse[0]:
             HandlePecasClick()
         elif peca_being_dragged:
@@ -462,7 +472,7 @@ while(running):
             # for i in range(current_game.tabuleiro.tamanho):
             #     for j in range(current_game.tabuleiro.tamanho):
             #         if (current_game.tabuleiro.tabuleiro[i][j] != None):
-            #             print(current_game.tabuleiro.tabuleiro[i][j])
+            #             print(current_game.tabuleiro.tabuleiro[i][j].cor)
             #         else:
             #             print(None)
 
