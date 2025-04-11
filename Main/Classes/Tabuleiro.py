@@ -265,6 +265,8 @@ class Tabuleiro:
         roque = None # Variavel para armazenar as informações do roque
 
         if (dif_linha == 0 and dif_coluna == 0):
+            # print(linha, coluna)
+            # print(peca.start_linha, peca.start_coluna)
             return {"canMove": False, "mensage":"Não movel"}
         
         content = self.tabuleiro[linha][coluna]
@@ -537,9 +539,11 @@ class Tabuleiro:
         else:
 
             closest = [self.CalculateScreenPosition(linha,coluna), (linha,coluna)]
-            # print("TRY: ", closest)
+            
             response = self.VerifyMove(linha, coluna, peca)
         
+        print(peca.start_linha, peca.start_coluna)
+        print("TRY: ", closest)
         
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)

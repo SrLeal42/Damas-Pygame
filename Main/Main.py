@@ -124,8 +124,7 @@ def HandlePecasRelease():
 
     if peca_being_dragged == None:
         return
-    print(peca_being_dragged.linha, peca_being_dragged.coluna)
-    print(peca_being_dragged.start_linha, peca_being_dragged.start_coluna)
+    
     response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged,current_game)
     last_peca_moved = peca_being_dragged
 
@@ -159,6 +158,33 @@ def HandlePecasRelease():
 
     if (current_game != None and current_game.jogo == "damas"):
         peca_mandatory_move = current_game.SomePecaCanCapture()
+
+
+
+def HandleIAMove(peca:Peca, move):
+    global current_game, state, peca_mandatory_move, SoundManager, last_peca_moved
+
+    response = current_game.tabuleiro.TryChangePecaPlace(peca, current_game, move[0], move[1])
+
+    print(response)
+
+    if (not response["canMove"]):
+        # print(peca.start_linha, peca.start_coluna)
+        return
+
+    SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
+
+    winnigResponse = current_game.WinningUpdate()
+
+    if (winnigResponse["gameEnd"]):
+        state = "winScreen"
+        SoundManager.StartPlayerVictoryMusic(0.4)
+
+    current_game.EndTurn()
+    
+    peca_mandatory_move = current_game.SomePecaCanCapture()
+
+    return 
 
 
 
@@ -395,17 +421,20 @@ def GameState():
 
         mouse = PG.mouse.get_pressed()
 
-        if (current_game.cor_rodada == 1):
-            value, move, peca = minimax(current_game.tabuleiro, DEPTH, True, current_game)
-            print(value, move, peca)
-            # current_game.tabuleiro.TryChangePecaPlace(peca, current_game, move[0], move[1])
-            current_game.EndTurn()
-            PG.time.delay(1000)
+        
 
         if mouse[0]:
             HandlePecasClick()
         elif peca_being_dragged:
             HandlePecasRelease()
+
+        if (current_game.cor_rodada == 1):
+            value, move, cordPeca = minimax(current_game.tabuleiro, DEPTH, True, current_game, False)
+            print(value, move, cordPeca)
+            peca = current_game.tabuleiro.tabuleiro[cordPeca[0]][cordPeca[1]]
+            HandleIAMove(peca, move)
+            # current_game.EndTurn()
+            # PG.time.delay(1000)
     
     elif (state == "paused"):
         
