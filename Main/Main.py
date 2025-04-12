@@ -1,17 +1,18 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO
+from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO, DEPTH
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
 from Classes.Button import Button
 from Classes.WaveText import WaveText
 from Classes.SoundFXManager import SoundFXManager
+from Classes.minimax.algoritmo import minimax
 
 PG.init()
 PG.mixer.init()
 
 SoundManager = SoundFXManager()
-volume_music = 0.3
+volume_music = 0#0.3
 
 running = True
 
@@ -23,12 +24,16 @@ state = "initialmenu"
 damas_text = WaveText("DAMAS", LARGURA//2, 150, WHITE, 75, 20, 2)
 paused_text = WaveText("PAUSADO", LARGURA//2, 100, WHITE, 50, 20, 2)
 select_text = WaveText("SELECIONE:", LARGURA//2, 100, WHITE, 50, 20, 2)
+select_mode_text = WaveText("MODO DE JOGO:", LARGURA//2, 100, WHITE, 50, 20, 2)
 
 start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
 quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
 
 damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
 xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
+
+PVB_button = Button(LARGURA//2 , ALTURA//2 - 80, "Main/Sprites/Buttons/pvb-button.png", 4)
+PVP_button = Button(LARGURA//2 , ALTURA//2 + 80, "Main/Sprites/Buttons/pvp-button.png", 4)
 
 pause_button = Button(40,40,"Main/Sprites/Buttons/pause-button.png", 2)
 
@@ -41,6 +46,8 @@ win_reset_button = Button(LARGURA//2 + 115, ALTURA//2 + 180, "Main/Sprites/Butto
 
 
 selected_game = ""
+
+game_mode = ""
 
 current_game = None
 
@@ -123,7 +130,7 @@ def HandlePecasRelease():
 
     if peca_being_dragged == None:
         return
-
+    
     response = current_game.tabuleiro.TryChangePecaPlace(peca_being_dragged,current_game)
     last_peca_moved = peca_being_dragged
 
@@ -136,7 +143,7 @@ def HandlePecasRelease():
     SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
 
     if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
-        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved, True)
+        canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
         
         current_game.sequencia_captura = canCapture
         # print(canCapture)
@@ -156,6 +163,30 @@ def HandlePecasRelease():
 
     if (current_game != None and current_game.jogo == "damas"):
         peca_mandatory_move = current_game.SomePecaCanCapture()
+
+
+
+def HandleIAMove(peca:Peca, move):
+    global current_game, state, peca_mandatory_move, SoundManager, last_peca_moved
+
+    response = current_game.tabuleiro.TryChangePecaPlace(peca, current_game, move[0], move[1])
+
+    if (not response["canMove"]):
+        return
+
+    SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
+
+    winnigResponse = current_game.WinningUpdate()
+
+    if (winnigResponse["gameEnd"]):
+        state = "winScreen"
+        SoundManager.StartPlayerVictoryMusic(0.4)
+
+    current_game.EndTurn()
+    
+    peca_mandatory_move = current_game.SomePecaCanCapture()
+
+    return 
 
 
 
@@ -328,8 +359,8 @@ def Transition(next_state:str):
 
 
 def GameState():
-    global running, state, window, current_game, peca_being_dragged, selected_game
-    global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button
+    global running, state, window, current_game, peca_being_dragged, selected_game, game_mode
+    global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button, PVB_button, PVP_button
     global damas_text
 
     if (state == "initialmenu"):
@@ -360,18 +391,34 @@ def GameState():
         if (damas_button.released):
             selected_game = "damas"
             CreateGame(selected_game)
-            Transition("gaming")
+            Transition("menumodeselection")
             # state = "gaming"
             damas_button.UpdateClick()
 
         if (xadrez_button.released):
             selected_game = "xadrez"
+            game_mode = "PVP"
             CreateGame(selected_game)
             Transition("gaming")
             # state = "gaming"
             xadrez_button.UpdateClick()
 
+    elif (state == "menumodeselection"):
 
+        select_mode_text.Wave(window)
+
+        PVB_button.DisplayButton(window)
+        PVP_button.DisplayButton(window)
+
+        if (PVB_button.released):
+            game_mode = "PVB"
+            Transition("gaming")
+            PVB_button.UpdateClick()
+
+        if (PVP_button.released):
+            game_mode = "PVP"
+            Transition("gaming")
+            PVP_button.UpdateClick()
 
     elif (state == "gaming"):
 
@@ -392,10 +439,20 @@ def GameState():
 
         mouse = PG.mouse.get_pressed()
 
+        
+
         if mouse[0]:
             HandlePecasClick()
         elif peca_being_dragged:
             HandlePecasRelease()
+
+        if (game_mode == "PVB"):
+            if (current_game.cor_rodada == 1):
+                value, move, cordPeca = minimax(current_game.tabuleiro, DEPTH, True, current_game, False)
+                # print(value, move, cordPeca)
+                peca = current_game.tabuleiro.tabuleiro[cordPeca[0]][cordPeca[1]]
+                HandleIAMove(peca, move)
+
     
     elif (state == "paused"):
         
@@ -462,7 +519,7 @@ while(running):
             # for i in range(current_game.tabuleiro.tamanho):
             #     for j in range(current_game.tabuleiro.tamanho):
             #         if (current_game.tabuleiro.tabuleiro[i][j] != None):
-            #             print(current_game.tabuleiro.tabuleiro[i][j])
+            #             print(current_game.tabuleiro.tabuleiro[i][j].cor)
             #         else:
             #             print(None)
 

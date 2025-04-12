@@ -265,6 +265,8 @@ class Tabuleiro:
         roque = None # Variavel para armazenar as informações do roque
 
         if (dif_linha == 0 and dif_coluna == 0):
+            # print(linha, coluna)
+            # print(peca.start_linha, peca.start_coluna)
             return {"canMove": False, "mensage":"Não movel"}
         
         content = self.tabuleiro[linha][coluna]
@@ -528,13 +530,19 @@ class Tabuleiro:
         return {"canMove": True, "mensage":"Sucess", "pecaCapturada":alguma_peca_capturada, "roque":roque}
 
 
-    def TryChangePecaPlace(self, peca:Peca, game):
+    def TryChangePecaPlace(self, peca:Peca, game, linha=None, coluna=None):
+        # print("TRTRTRT", id(self))
+        if (linha == None or coluna == None):
+            closest = self.ClosePlace(peca.x,peca.y)
+            # print(closest)
+            response = self.VerifyMove(closest[1][0],closest[1][1],peca)
+        else:
 
-        closest = self.ClosePlace(peca.x,peca.y)
-        # print(closest)
+            closest = [self.CalculateScreenPosition(linha,coluna), (linha,coluna)]
+            
+            response = self.VerifyMove(linha, coluna, peca)
         
-        response = self.VerifyMove(closest[1][0],closest[1][1],peca)
-        
+
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
@@ -678,5 +686,62 @@ class Tabuleiro:
     
     def TurnPecaIntoRainhaVerification(self, peca:Peca):
         return (peca.linha == self.tamanho-1 and (peca.cor == 1 and peca.tipo == 2)) or (peca.linha == 0 and (peca.cor == 0 and peca.tipo == 2))
+
+
+    def CountPecas(self):
+        num_pecas = 0
+        num_pecas_brancas = 0
+        num_pecas_pretas = 0
+        num_damas_brancas = 0
+        num_damas_pretas = 0
+
+        for i in range(self.tamanho):
+            for j in range(self.tamanho):
+                content = self.tabuleiro[i][j]
+
+                if (content == None):
+                    continue
+                
+                num_pecas += 1
+
+                if (content.cor == 0):
+                    num_pecas_brancas += 1
+                    num_damas_brancas += 1 if (content.tipo == 1) else 0
+                
+                else:
+                    num_pecas_pretas += 1
+                    num_damas_pretas += 1 if (content.tipo == 1) else 0
+
+                
+                        
+
+        return {"total": num_pecas, "brancas": num_pecas_brancas, "pretas": num_pecas_pretas, "damas_brancas": num_damas_brancas, "damas_pretas": num_damas_pretas}
+                    
+
+    def EvalueteBoard(self):
+        response = self.CountPecas()
+        return response["pretas"] - response["brancas"] + (response["damas_pretas"] * .5 - response["damas_brancas"] * .5)
+    
+
+    def GetAllPecas(self, color:int):
+        pecas = []
+
+        for i in range(self.tamanho):
+            for j in range(self.tamanho):
+                content = self.tabuleiro[i][j]
+
+                if (content == None):
+                    continue
+
+                if (content.cor == color):
+                    pecas.append(content)
+
+        return pecas
+
+
+
+
+
+
 
 
