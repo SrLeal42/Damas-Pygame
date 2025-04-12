@@ -532,7 +532,7 @@ class Tabuleiro:
 
     def TryChangePecaPlace(self, peca:Peca, game, linha=None, coluna=None):
         # print("TRTRTRT", id(self))
-        if (not linha or not coluna):
+        if (linha == None or coluna == None):
             closest = self.ClosePlace(peca.x,peca.y)
             # print(closest)
             response = self.VerifyMove(closest[1][0],closest[1][1],peca)
@@ -542,9 +542,7 @@ class Tabuleiro:
             
             response = self.VerifyMove(linha, coluna, peca)
         
-        print(peca.start_linha, peca.start_coluna)
-        print("TRY: ", closest)
-        
+
         if (not response["canMove"]):
             peca.SetCoord(peca.start_x,peca.start_y,True)
             return response
