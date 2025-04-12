@@ -32,8 +32,8 @@ quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-butt
 damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
 xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
 
-PVB_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/PECA_BRANCA.png", 4)
-PVP_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/PECA_PRETA.png", 4)
+PVB_button = Button(LARGURA//2 , ALTURA//2 - 80, "Main/Sprites/Buttons/pvb-button.png", 4)
+PVP_button = Button(LARGURA//2 , ALTURA//2 + 80, "Main/Sprites/Buttons/pvp-button.png", 4)
 
 pause_button = Button(40,40,"Main/Sprites/Buttons/pause-button.png", 2)
 
@@ -171,10 +171,7 @@ def HandleIAMove(peca:Peca, move):
 
     response = current_game.tabuleiro.TryChangePecaPlace(peca, current_game, move[0], move[1])
 
-    print(response)
-
     if (not response["canMove"]):
-        # print(peca.start_linha, peca.start_coluna)
         return
 
     SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
@@ -452,7 +449,7 @@ def GameState():
         if (game_mode == "PVB"):
             if (current_game.cor_rodada == 1):
                 value, move, cordPeca = minimax(current_game.tabuleiro, DEPTH, True, current_game, False)
-                print(value, move, cordPeca)
+                # print(value, move, cordPeca)
                 peca = current_game.tabuleiro.tabuleiro[cordPeca[0]][cordPeca[1]]
                 HandleIAMove(peca, move)
 
