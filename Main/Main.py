@@ -439,19 +439,19 @@ def GameState():
 
         mouse = PG.mouse.get_pressed()
 
-        
-
-        if mouse[0]:
-            HandlePecasClick()
-        elif peca_being_dragged:
-            HandlePecasRelease()
-
         if (game_mode == "PVB"):
             if (current_game.cor_rodada == 1):
                 value, move, cordPeca = minimax(current_game.tabuleiro, DEPTH, True, current_game, False)
                 # print(value, move, cordPeca)
                 peca = current_game.tabuleiro.tabuleiro[cordPeca[0]][cordPeca[1]]
                 HandleIAMove(peca, move)
+
+        if mouse[0]:
+            HandlePecasClick()
+        elif peca_being_dragged:
+            HandlePecasRelease()
+
+        
 
     
     elif (state == "paused"):
