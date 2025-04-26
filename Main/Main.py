@@ -25,6 +25,7 @@ damas_text = WaveText("DAMAS", LARGURA//2, 150, WHITE, 75, 20, 2)
 paused_text = WaveText("PAUSADO", LARGURA//2, 100, WHITE, 50, 20, 2)
 select_text = WaveText("SELECIONE:", LARGURA//2, 100, WHITE, 50, 20, 2)
 select_mode_text = WaveText("MODO DE JOGO:", LARGURA//2, 100, WHITE, 50, 20, 2)
+rules_text = WaveText("Regras:", LARGURA//2, 100, WHITE, 50, 10, 2)
 
 start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
 quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
@@ -36,6 +37,7 @@ PVB_button = Button(LARGURA//2 , ALTURA//2 - 80, "Main/Sprites/Buttons/pvb-butto
 PVP_button = Button(LARGURA//2 , ALTURA//2 + 80, "Main/Sprites/Buttons/pvp-button.png", 4)
 
 pause_button = Button(40,40,"Main/Sprites/Buttons/pause-button.png", 2)
+rules_button = Button(LARGURA-40,40,"Main/Sprites/Buttons/rules-button.png", 2)
 
 resume_button = Button(LARGURA//2, ALTURA//2 -120, "Main/Sprites/Buttons/resume-button.png", 3)
 initial_menu_button = Button(LARGURA//2, ALTURA//2 , "Main/Sprites/Buttons/menu-button.png", 3)
@@ -360,8 +362,8 @@ def Transition(next_state:str):
 
 def GameState():
     global running, state, window, current_game, peca_being_dragged, selected_game, game_mode
-    global start_button, quit_button, pause_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button, PVB_button, PVP_button
-    global damas_text
+    global start_button, quit_button, pause_button, rules_button, resume_button, initial_menu_button, reset_button, damas_button, xadrez_button, PVB_button, PVP_button
+    global damas_text, rules_text
 
     if (state == "initialmenu"):
         
@@ -426,10 +428,17 @@ def GameState():
             CreateGame(selected_game)
 
         pause_button.DisplayButton(window)
-
+        
         if (pause_button.released):
             state = "paused"
             pause_button.UpdateClick()
+
+        if (current_game.jogo == "damas"):
+            rules_button.DisplayButton(window)
+
+            if (rules_button.released):
+                state = "rulesScreen"
+                rules_button.UpdateClick()
 
         current_game.tabuleiro.DesenhaTabuleiro(window,peca_being_dragged,peca_mandatory_move)
         
@@ -451,7 +460,18 @@ def GameState():
         elif peca_being_dragged:
             HandlePecasRelease()
 
-        
+    elif (state == "rulesScreen"):
+        rules = PG.image.load("Main/Sprites/regras.png").convert_alpha()
+
+        window.blit(rules, (0, 0))
+
+        rules_button.DisplayButton(window)
+
+        rules_text.Wave(window)
+
+        if (rules_button.released):
+            state = "gaming"
+            rules_button.UpdateClick()
 
     
     elif (state == "paused"):
@@ -484,6 +504,7 @@ def GameState():
             DrawCorRodada()
 
         pause_button.Draw(window)
+        rules_button.Draw()
 
         DrawWinScreen()
 
