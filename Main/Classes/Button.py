@@ -1,6 +1,6 @@
 import pygame as PG
 from Classes.SoundFXManager import SoundFXManager
-
+from resource_path import resource_path
 
 class Button(PG.sprite.Sprite):
 
@@ -32,7 +32,7 @@ class Button(PG.sprite.Sprite):
 
     def SetSprite(self,path:str, scale:float):
         # image é um atributo da classe Sprite 
-        self.image = PG.image.load(path).convert_alpha()
+        self.image = PG.image.load(resource_path(path)).convert_alpha()
 
         x_size = int(self.image.get_width() * scale)
         y_size = int(self.image.get_height() * scale)
@@ -70,7 +70,7 @@ class Button(PG.sprite.Sprite):
             self.pressed = PG.mouse.get_pressed()[0] == 1
 
             if (self.released):
-                self.SoundManager.PlaySoundFX("Main/Sounds/SoundFX/Select_1.wav", 0.3)
+                self.SoundManager.PlaySoundFX(resource_path("Main/Sounds/SoundFX/Select_1.wav"), 0.3)
 
     def ButtonHover(self):
         if (not self.normal_img or not self.bigger_img):
@@ -85,7 +85,7 @@ class Button(PG.sprite.Sprite):
 
         if (colidiu and not self.played_hover_SFX):
 
-            self.SoundManager.PlaySoundFX("Main/Sounds/SoundFX/Cancel_1.wav", 0.3)
+            self.SoundManager.PlaySoundFX(resource_path("Main/Sounds/SoundFX/Cancel_1.wav"), 0.3)
             
             self.played_hover_SFX = True
 

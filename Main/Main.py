@@ -1,5 +1,5 @@
 import pygame as PG
-from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_TRANSICAO, DEPTH
+from Config import LARGURA, ALTURA,GRAY,BLACK,BLACK50,WHITE,WHITE50,FONTE_PRIN, PATH_SPRITE_PECA_BRANCA, PATH_SPRITE_PECA_PRETA, PATH_SPRITE_DAMAS_BRANCA, PATH_TRANSICAO, DEPTH
 from Classes.Pecas import Peca
 from Classes.Tabuleiro import Tabuleiro
 from Classes.Game import Game
@@ -7,17 +7,20 @@ from Classes.Button import Button
 from Classes.WaveText import WaveText
 from Classes.SoundFXManager import SoundFXManager
 from Classes.minimax.algoritmo import minimax
+from resource_path import resource_path
 
 PG.init()
 PG.mixer.init()
 
 SoundManager = SoundFXManager()
-volume_music = 0#0.3
+volume_music = 0.3
 
 running = True
 
 window = PG.display.set_mode((LARGURA,ALTURA))
 PG.display.set_caption("Damas")
+PG.display.set_icon(PG.image.load(resource_path(PATH_SPRITE_DAMAS_BRANCA)))
+
 
 state = "initialmenu"
 
@@ -57,7 +60,7 @@ peca_being_dragged = None
 last_peca_moved = None
 peca_mandatory_move = []
 
-fonte_principal = PG.font.Font(FONTE_PRIN, 40)
+fonte_principal = PG.font.Font(resource_path(FONTE_PRIN), 40)
 
 def Lerp(a, b, t):
     return a + (b - a) * t
@@ -142,7 +145,7 @@ def HandlePecasRelease():
     if (not response["canMove"]):
         return
 
-    SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
+    SoundManager.PlayRandomSoundFX([resource_path("Main/Sounds/SoundFX/pecaSFX_1.mp3"), resource_path("Main/Sounds/SoundFX/pecaSFX_2.mp3"), resource_path("Main/Sounds/SoundFX/pecaSFX_3.mp3")], 0.5)
 
     if (not response["turnThisRound"] and (response["pecaCapturada"] or current_game.sequencia_captura)):
         canCapture = current_game.tabuleiro.VerifyPecaCanCapture(last_peca_moved)
@@ -176,7 +179,7 @@ def HandleIAMove(peca:Peca, move):
     if (not response["canMove"]):
         return
 
-    SoundManager.PlayRandomSoundFX(["Main/Sounds/SoundFX/pecaSFX_1.mp3", "Main/Sounds/SoundFX/pecaSFX_2.mp3", "Main/Sounds/SoundFX/pecaSFX_3.mp3"], 0.5)
+    SoundManager.PlayRandomSoundFX([resource_path("Main/Sounds/SoundFX/pecaSFX_1.mp3"), resource_path("Main/Sounds/SoundFX/pecaSFX_2.mp3"), resource_path("Main/Sounds/SoundFX/pecaSFX_3.mp3")], 0.5)
 
     winnigResponse = current_game.WinningUpdate()
 
@@ -195,7 +198,7 @@ def HandleIAMove(peca:Peca, move):
 def DrawText(text:str, x:int, y:int, color, size:int):
     global window
 
-    fonte = PG.font.Font(FONTE_PRIN, size)
+    fonte = PG.font.Font(resource_path(FONTE_PRIN), size)
 
     text_render = fonte.render(text, False, color)
 
@@ -211,7 +214,7 @@ def DrawCorRodada():
     if current_game == None:
         return
     
-    painel = PG.image.load("Main/Sprites/painel.png").convert_alpha()
+    painel = PG.image.load(resource_path("Main/Sprites/painel.png")).convert_alpha()
 
     x_size = int(painel.get_width() * 8)
     y_size = int(painel.get_height() * 8)
@@ -239,7 +242,7 @@ def DrawCapturePeca(jogo:str):
     if (jogo == "damas"):
 
         # PEÇAS CAPTURADAS BRANCAS
-        image = PG.image.load(PATH_SPRITE_PECA_BRANCA).convert_alpha()
+        image = PG.image.load(resource_path(PATH_SPRITE_PECA_BRANCA)).convert_alpha()
 
         new_size = int(image.get_width() * 1.5)
 
@@ -251,7 +254,7 @@ def DrawCapturePeca(jogo:str):
 
 
         # PEÇAS CAPTURADAS PRETAS
-        image = PG.image.load(PATH_SPRITE_PECA_PRETA).convert_alpha()
+        image = PG.image.load(resource_path(PATH_SPRITE_PECA_PRETA)).convert_alpha()
 
         new_size = int(image.get_width() * 1.5)
 
@@ -307,7 +310,7 @@ def DrawWinScreen():
     window.blit(rect_surf,(0,0))
 
     # Painel com as informações e botões
-    painel = PG.image.load("Main/Sprites/painel_64.png").convert_alpha()
+    painel = PG.image.load(resource_path("Main/Sprites/painel_64.png")).convert_alpha()
 
     x_size = int(painel.get_width() * 9)
     y_size = int(painel.get_height() * 9)
@@ -331,7 +334,7 @@ def DrawWinScreen():
 def Transition(next_state:str):
     global window, state
     
-    image = PG.image.load(PATH_TRANSICAO).convert_alpha()
+    image = PG.image.load(resource_path(PATH_TRANSICAO)).convert_alpha()
 
     timer = 0
     duration = 1
@@ -461,7 +464,7 @@ def GameState():
             HandlePecasRelease()
 
     elif (state == "rulesScreen"):
-        rules = PG.image.load("Main/Sprites/regras.png").convert_alpha()
+        rules = PG.image.load(resource_path("Main/Sprites/regras.png")).convert_alpha()
 
         window.blit(rules, (0, 0))
 
@@ -504,7 +507,7 @@ def GameState():
             DrawCorRodada()
 
         pause_button.Draw(window)
-        rules_button.Draw()
+        rules_button.Draw(window)
 
         DrawWinScreen()
 

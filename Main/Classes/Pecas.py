@@ -1,6 +1,6 @@
 import pygame as PG
 from Config import DICT_PATH_SPRITE
-
+from resource_path import resource_path
 
 class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
 
@@ -34,11 +34,11 @@ class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
         self.start_x = x
         self.start_y = y
         self.tipo = tipo
-        self.SetSprite(DICT_PATH_SPRITE[tipo][cor])
+        self.SetSprite(resource_path(DICT_PATH_SPRITE[tipo][cor]))
 
     def SetSprite(self,path:str):
         # image é um atributo da classe Sprite 
-        self.image = PG.image.load(path).convert_alpha()
+        self.image = PG.image.load(resource_path(path)).convert_alpha()
 
         new_size = int(self.image.get_width() * self.escala)
         
@@ -80,10 +80,10 @@ class Peca(PG.sprite.Sprite): # Herdando a classe Sprite do Pygame
     
     def TurnPecaInToDama(self):
         self.tipo = 1
-        self.SetSprite(DICT_PATH_SPRITE[self.tipo][self.cor])
+        self.SetSprite(resource_path(DICT_PATH_SPRITE[self.tipo][self.cor]))
 
     def TurnPecaInToRainha(self):
         self.tipo = 6
-        self.SetSprite(DICT_PATH_SPRITE[self.tipo][self.cor])
+        self.SetSprite(resource_path(DICT_PATH_SPRITE[self.tipo][self.cor]))
 
 

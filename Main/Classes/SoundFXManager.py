@@ -1,5 +1,6 @@
 import pygame as PG
 import random
+from resource_path import resource_path
 
 class SoundFXManager:
 
@@ -7,7 +8,7 @@ class SoundFXManager:
         
         PG.mixer.music.stop()
 
-        PG.mixer.music.load("Main/Sounds/Music/Musica_1.mp3")
+        PG.mixer.music.load(resource_path("Main/Sounds/Music/Musica_1.mp3"))
 
         PG.mixer.music.set_volume(volume)
 
@@ -17,7 +18,7 @@ class SoundFXManager:
 
         PG.mixer.music.stop()
 
-        PG.mixer.music.load("Main/Sounds/Music/Vitoria_1.mp3")
+        PG.mixer.music.load(resource_path("Main/Sounds/Music/Vitoria_1.mp3"))
 
         PG.mixer.music.set_volume(volume)
 

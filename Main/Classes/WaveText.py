@@ -1,6 +1,7 @@
 import pygame as PG
 import math
 from Config import FONTE_PRIN
+from resource_path import resource_path
 
 class WaveText:
 
@@ -95,7 +96,7 @@ class WaveText:
 
     def DrawText(self, window):
 
-        fonte = PG.font.Font(FONTE_PRIN, self.size)
+        fonte = PG.font.Font(resource_path(FONTE_PRIN), self.size)
 
         text_render = fonte.render(self.text, False, self.color)
 
