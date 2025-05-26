@@ -26,15 +26,15 @@ state = "initialmenu"
 
 damas_text = WaveText("DAMAS", LARGURA//2, 150, WHITE, 75, 20, 2)
 paused_text = WaveText("PAUSADO", LARGURA//2, 100, WHITE, 50, 20, 2)
-select_text = WaveText("SELECIONE:", LARGURA//2, 100, WHITE, 50, 20, 2)
+# select_text = WaveText("SELECIONE:", LARGURA//2, 100, WHITE, 50, 20, 2)
 select_mode_text = WaveText("MODO DE JOGO:", LARGURA//2, 100, WHITE, 50, 20, 2)
 rules_text = WaveText("Regras:", LARGURA//2, 100, WHITE, 50, 10, 2)
 
 start_button = Button(LARGURA//2, ALTURA//2 -60, "Main/Sprites/Buttons/start-button.png", 3)
 quit_button = Button(LARGURA//2, ALTURA//2 + 60, "Main/Sprites/Buttons/quit-button.png", 3)
 
-damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
-xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
+# damas_button = Button(LARGURA//2 - 100, ALTURA//2 , "Main/Sprites/Damas/damas-branco.png", 4)
+# xadrez_button = Button(LARGURA//2 + 100, ALTURA//2 , "Main/Sprites/Xadrez/rei-branco.png", 7)
 
 PVB_button = Button(LARGURA//2 , ALTURA//2 - 80, "Main/Sprites/Buttons/pvb-button.png", 4)
 PVP_button = Button(LARGURA//2 , ALTURA//2 + 80, "Main/Sprites/Buttons/pvp-button.png", 4)
@@ -376,7 +376,9 @@ def GameState():
         quit_button.DisplayButton(window)
 
         if (start_button.released):
-            Transition("menuselection")
+            selected_game = "damas"
+            CreateGame(selected_game)
+            Transition("menumodeselection")
             # state = "menuselection"
             start_button.UpdateClick()
             
@@ -386,27 +388,27 @@ def GameState():
             quit_button.UpdateClick()
             
 
-    elif (state == "menuselection"):
+    # elif (state == "menuselection"):
 
-        select_text.Wave(window)
+    #     select_text.Wave(window)
 
-        damas_button.DisplayButton(window)
-        xadrez_button.DisplayButton(window)
+    #     damas_button.DisplayButton(window)
+    #     xadrez_button.DisplayButton(window)
 
-        if (damas_button.released):
-            selected_game = "damas"
-            CreateGame(selected_game)
-            Transition("menumodeselection")
-            # state = "gaming"
-            damas_button.UpdateClick()
+    #     if (damas_button.released):
+    #         selected_game = "damas"
+    #         CreateGame(selected_game)
+    #         Transition("menumodeselection")
+    #         # state = "gaming"
+    #         damas_button.UpdateClick()
 
-        if (xadrez_button.released):
-            selected_game = "xadrez"
-            game_mode = "PVP"
-            CreateGame(selected_game)
-            Transition("gaming")
-            # state = "gaming"
-            xadrez_button.UpdateClick()
+    #     if (xadrez_button.released):
+    #         selected_game = "xadrez"
+    #         game_mode = "PVP"
+    #         CreateGame(selected_game)
+    #         Transition("gaming")
+    #         # state = "gaming"
+    #         xadrez_button.UpdateClick()
 
     elif (state == "menumodeselection"):
 
